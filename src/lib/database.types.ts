@@ -36,17 +36,23 @@ export type Database = {
     Tables: {
       brands: {
         Row: {
+          active: boolean
           created_at: string
+          description: string | null
           id: string
           name: string
         }
         Insert: {
+          active?: boolean
           created_at?: string
+          description?: string | null
           id?: string
           name: string
         }
         Update: {
+          active?: boolean
           created_at?: string
+          description?: string | null
           id?: string
           name?: string
         }
@@ -54,6 +60,8 @@ export type Database = {
       }
       clients: {
         Row: {
+          active: boolean
+          address: string | null
           created_at: string
           email: string | null
           id: string
@@ -61,6 +69,8 @@ export type Database = {
           phone: string | null
         }
         Insert: {
+          active?: boolean
+          address?: string | null
           created_at?: string
           email?: string | null
           id?: string
@@ -68,6 +78,8 @@ export type Database = {
           phone?: string | null
         }
         Update: {
+          active?: boolean
+          address?: string | null
           created_at?: string
           email?: string | null
           id?: string
@@ -78,17 +90,23 @@ export type Database = {
       }
       machine_types: {
         Row: {
+          active: boolean
           created_at: string
+          description: string | null
           id: string
           name: string
         }
         Insert: {
+          active?: boolean
           created_at?: string
+          description?: string | null
           id?: string
           name: string
         }
         Update: {
+          active?: boolean
           created_at?: string
+          description?: string | null
           id?: string
           name?: string
         }
@@ -96,25 +114,34 @@ export type Database = {
       }
       machines: {
         Row: {
+          active: boolean
           brand_id: string
+          client_id: string | null
           created_at: string
           id: string
+          model: string | null
           name: string
           serial_number: string | null
           type_id: string
         }
         Insert: {
+          active?: boolean
           brand_id: string
+          client_id?: string | null
           created_at?: string
           id?: string
+          model?: string | null
           name: string
           serial_number?: string | null
           type_id: string
         }
         Update: {
+          active?: boolean
           brand_id?: string
+          client_id?: string | null
           created_at?: string
           id?: string
+          model?: string | null
           name?: string
           serial_number?: string | null
           type_id?: string
@@ -128,6 +155,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "machines_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "machines_type_id_fkey"
             columns: ["type_id"]
             isOneToOne: false
@@ -136,33 +170,97 @@ export type Database = {
           },
         ]
       }
+      maintenances: {
+        Row: {
+          cost: number | null
+          created_at: string
+          date: string
+          description: string
+          id: string
+          is_corrective: boolean
+          machine_id: string
+          status: string
+          technician_id: string | null
+        }
+        Insert: {
+          cost?: number | null
+          created_at?: string
+          date: string
+          description: string
+          id?: string
+          is_corrective?: boolean
+          machine_id: string
+          status?: string
+          technician_id?: string | null
+        }
+        Update: {
+          cost?: number | null
+          created_at?: string
+          date?: string
+          description?: string
+          id?: string
+          is_corrective?: boolean
+          machine_id?: string
+          status?: string
+          technician_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maintenances_machine_id_fkey"
+            columns: ["machine_id"]
+            isOneToOne: false
+            referencedRelation: "machines"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maintenances_technician_id_fkey"
+            columns: ["technician_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
+          client_id: string | null
           created_at: string
           full_name: string
           id: string
           role: string
         }
         Insert: {
+          client_id?: string | null
           created_at?: string
           full_name: string
           id: string
           role: string
         }
         Update: {
+          client_id?: string | null
           created_at?: string
           full_name?: string
           id?: string
           role?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      current_client_id: { Args: never; Returns: string }
       is_admin: { Args: never; Returns: boolean }
+      is_staff: { Args: never; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

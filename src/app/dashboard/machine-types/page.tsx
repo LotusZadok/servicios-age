@@ -15,7 +15,7 @@ export default async function MachineTypesPage() {
         <h1 className="text-2xl font-semibold">Tipos de maquinaria</h1>
         <Link
           href="/dashboard/machine-types/new"
-          className="rounded bg-gray-900 px-3 py-2 text-sm text-white"
+          className="btn btn-primary"
         >
           Nuevo tipo
         </Link>
@@ -32,12 +32,12 @@ export default async function MachineTypesPage() {
             <tr key={type.id} className="border-b text-sm">
               <td className="p-2">{type.name}</td>
               <td className="flex gap-3 p-2">
-                <Link href={`/dashboard/machine-types/${type.id}/edit`} className="text-blue-600">
+                <Link href={`/dashboard/machine-types/${type.id}/edit`} className="link-edit">
                   Editar
                 </Link>
                 {canDelete(profile.role) && (
                   <form action={deleteMachineType.bind(null, type.id)}>
-                    <button type="submit" className="text-red-600">
+                    <button type="submit" className="link-danger">
                       Eliminar
                     </button>
                   </form>

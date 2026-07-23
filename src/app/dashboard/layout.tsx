@@ -1,7 +1,7 @@
-import Link from 'next/link'
 import { requireUser } from '@/lib/auth'
 import { canManageUsers } from '@/lib/permissions'
 import { logout } from './actions'
+import { NavLink } from './nav-link'
 
 export default async function DashboardLayout({
   children,
@@ -11,28 +11,38 @@ export default async function DashboardLayout({
   const { profile } = await requireUser()
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="flex items-center justify-between border-b bg-white px-6 py-3">
-        <div className="flex gap-4 text-sm">
-          <Link href="/dashboard/clients">Clientes</Link>
-          <Link href="/dashboard/machines">Máquinas</Link>
-          <Link href="/dashboard/brands">Marcas</Link>
-          <Link href="/dashboard/machine-types">Tipos</Link>
-          <Link href="/dashboard/reports">Reportes</Link>
-          {canManageUsers(profile.role) && (
-            <Link href="/dashboard/users">Usuarios</Link>
-          )}
-        </div>
-        <form action={logout} className="flex items-center gap-3 text-sm">
-          <span>
-            {profile.full_name} ({profile.role})
+    <div className="min-h-screen">
+      <header className="app-nav">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3 sm:px-6">
+          <span className="brand shrink-0">
+            <span className="brand-mark">AG</span>
+            AGServicios
           </span>
-          <button type="submit" className="text-gray-500 underline">
-            Salir
-          </button>
-        </form>
-      </nav>
-      <main className="p-6">{children}</main>
+
+          <nav className="order-3 flex w-full flex-wrap items-center gap-x-5 gap-y-2 border-t pt-3 sm:order-none sm:w-auto sm:border-0 sm:pt-0">
+            <NavLink href="/dashboard/clients">Clientes</NavLink>
+            <NavLink href="/dashboard/machines">Máquinas</NavLink>
+            <NavLink href="/dashboard/brands">Marcas</NavLink>
+            <NavLink href="/dashboard/machine-types">Tipos</NavLink>
+            <NavLink href="/dashboard/reports">Reportes</NavLink>
+            {canManageUsers(profile.role) && (
+              <NavLink href="/dashboard/users">Usuarios</NavLink>
+            )}
+          </nav>
+
+          <form action={logout} className="ml-auto flex items-center gap-3">
+            <span className="hidden text-right leading-tight sm:block">
+              <span className="block text-sm font-medium">{profile.full_name}</span>
+              <span className="eyebrow">{profile.role}</span>
+            </span>
+            <button type="submit" className="btn btn-ghost">
+              Salir
+            </button>
+          </form>
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">{children}</main>
     </div>
   )
 }

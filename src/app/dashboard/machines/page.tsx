@@ -18,7 +18,7 @@ export default async function MachinesPage() {
         <h1 className="text-2xl font-semibold">Máquinas</h1>
         <Link
           href="/dashboard/machines/new"
-          className="rounded bg-gray-900 px-3 py-2 text-sm text-white"
+          className="btn btn-primary"
         >
           Nueva máquina
         </Link>
@@ -37,16 +37,16 @@ export default async function MachinesPage() {
           {(machines ?? []).map((machine) => (
             <tr key={machine.id} className="border-b text-sm">
               <td className="p-2">{machine.name}</td>
-              <td className="p-2">{machine.serial_number}</td>
+              <td className="p-2"><span className="mono">{machine.serial_number}</span></td>
               <td className="p-2">{machine.brands?.name}</td>
               <td className="p-2">{machine.machine_types?.name}</td>
               <td className="flex gap-3 p-2">
-                <Link href={`/dashboard/machines/${machine.id}/edit`} className="text-blue-600">
+                <Link href={`/dashboard/machines/${machine.id}/edit`} className="link-edit">
                   Editar
                 </Link>
                 {canDelete(profile.role) && (
                   <form action={deleteMachine.bind(null, machine.id)}>
-                    <button type="submit" className="text-red-600">
+                    <button type="submit" className="link-danger">
                       Eliminar
                     </button>
                   </form>

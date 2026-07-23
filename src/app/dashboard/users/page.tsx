@@ -14,7 +14,7 @@ export default async function UsersPage() {
         <h1 className="text-2xl font-semibold">Usuarios</h1>
         <Link
           href="/dashboard/users/new"
-          className="rounded bg-gray-900 px-3 py-2 text-sm text-white"
+          className="btn btn-primary"
         >
           Nuevo usuario
         </Link>
@@ -38,7 +38,7 @@ export default async function UsersPage() {
                     <option value="admin">admin</option>
                     <option value="empleado">empleado</option>
                   </select>
-                  <button type="submit" className="text-blue-600">
+                  <button type="submit" className="link-edit">
                     Guardar
                   </button>
                 </form>

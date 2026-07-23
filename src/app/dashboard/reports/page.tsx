@@ -4,7 +4,7 @@ export default function ReportsPage() {
       <h1 className="text-2xl font-semibold">Reportes</h1>
       <a
         href="/api/reports/catalog"
-        className="inline-block rounded bg-gray-900 px-3 py-2 text-sm text-white"
+        className="inline-block btn btn-primary"
       >
         Descargar catálogo (CSV)
       </a>

@@ -10,7 +10,7 @@ export default async function NewUserPage({
   return (
     <form action={createUser} className="max-w-sm space-y-4">
       <h1 className="text-2xl font-semibold">Nuevo usuario</h1>
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm link-danger">{error}</p>}
       <div>
         <label htmlFor="full_name" className="block text-sm font-medium">
           Nombre completo
@@ -56,7 +56,7 @@ export default async function NewUserPage({
           <option value="admin">admin</option>
         </select>
       </div>
-      <button type="submit" className="rounded bg-gray-900 px-3 py-2 text-sm text-white">
+      <button type="submit" className="btn btn-primary">
         Crear usuario
       </button>
     </form>

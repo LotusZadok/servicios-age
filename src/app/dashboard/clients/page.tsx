@@ -15,7 +15,7 @@ export default async function ClientsPage() {
         <h1 className="text-2xl font-semibold">Clientes</h1>
         <Link
           href="/dashboard/clients/new"
-          className="rounded bg-gray-900 px-3 py-2 text-sm text-white"
+          className="btn btn-primary"
         >
           Nuevo cliente
         </Link>
@@ -36,12 +36,12 @@ export default async function ClientsPage() {
               <td className="p-2">{client.email}</td>
               <td className="p-2">{client.phone}</td>
               <td className="flex gap-3 p-2">
-                <Link href={`/dashboard/clients/${client.id}/edit`} className="text-blue-600">
+                <Link href={`/dashboard/clients/${client.id}/edit`} className="link-edit">
                   Editar
                 </Link>
                 {canDelete(profile.role) && (
                   <form action={deleteClientRecord.bind(null, client.id)}>
-                    <button type="submit" className="text-red-600">
+                    <button type="submit" className="link-danger">
                       Eliminar
                     </button>
                   </form>

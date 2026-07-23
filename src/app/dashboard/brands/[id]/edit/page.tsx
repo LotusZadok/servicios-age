@@ -23,7 +23,7 @@ export default async function EditBrandPage({
   return (
     <form action={updateBrandWithId} className="max-w-sm space-y-4">
       <h1 className="text-2xl font-semibold">Editar marca</h1>
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm link-danger">{error}</p>}
       <div>
         <label htmlFor="name" className="block text-sm font-medium">
           Nombre
@@ -36,7 +36,7 @@ export default async function EditBrandPage({
           className="mt-1 w-full rounded border px-3 py-2"
         />
       </div>
-      <button type="submit" className="rounded bg-gray-900 px-3 py-2 text-sm text-white">
+      <button type="submit" className="btn btn-primary">
         Guardar
       </button>
     </form>

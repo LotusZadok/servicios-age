@@ -15,7 +15,7 @@ export default async function BrandsPage() {
         <h1 className="text-2xl font-semibold">Marcas</h1>
         <Link
           href="/dashboard/brands/new"
-          className="rounded bg-gray-900 px-3 py-2 text-sm text-white"
+          className="btn btn-primary"
         >
           Nueva marca
         </Link>
@@ -32,12 +32,12 @@ export default async function BrandsPage() {
             <tr key={brand.id} className="border-b text-sm">
               <td className="p-2">{brand.name}</td>
               <td className="flex gap-3 p-2">
-                <Link href={`/dashboard/brands/${brand.id}/edit`} className="text-blue-600">
+                <Link href={`/dashboard/brands/${brand.id}/edit`} className="link-edit">
                   Editar
                 </Link>
                 {canDelete(profile.role) && (
                   <form action={deleteBrand.bind(null, brand.id)}>
-                    <button type="submit" className="text-red-600">
+                    <button type="submit" className="link-danger">
                       Eliminar
                     </button>
                   </form>

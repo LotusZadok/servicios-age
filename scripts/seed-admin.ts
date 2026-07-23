@@ -1,7 +1,7 @@
 import { config } from 'dotenv'
 config({ path: '.env.local' })
 
-import { createAdminClient } from '../src/lib/supabase/admin'
+import { createAdminClient } from '../src/lib/supabase/admin-core'
 
 async function main() {
   const email = process.argv[2]
@@ -33,6 +33,8 @@ async function main() {
   })
 
   if (profileError) {
+    // Roll back the orphaned auth user so the email stays reusable.
+    await admin.auth.admin.deleteUser(data.user.id)
     console.error('Error creando perfil:', profileError.message)
     process.exit(1)
   }

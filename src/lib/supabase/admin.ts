@@ -1,16 +1,6 @@
-import { createClient as createSupabaseClient } from '@supabase/supabase-js'
-import type { Database } from '@/lib/database.types'
+import 'server-only'
 
-// Server-only: bypasses RLS. Never import this from a Client Component.
-export function createAdminClient() {
-  return createSupabaseClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
-    }
-  )
-}
+// Service-role client: bypasses RLS. The `server-only` import above makes any
+// attempt to bundle this into Client Component code a build-time error.
+// Standalone Node scripts should import from `./admin-core` instead.
+export { createAdminClient } from './admin-core'

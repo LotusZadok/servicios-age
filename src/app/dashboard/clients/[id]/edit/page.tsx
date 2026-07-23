@@ -59,6 +59,17 @@ export default async function EditClientPage({
           className="mt-1 w-full rounded border px-3 py-2"
         />
       </div>
+      <div>
+        <label htmlFor="address" className="block text-sm font-medium">
+          Dirección
+        </label>
+        <input
+          id="address"
+          name="address"
+          defaultValue={client.address ?? ''}
+          className="mt-1 w-full rounded border px-3 py-2"
+        />
+      </div>
       <button type="submit" className="btn btn-primary">
         Guardar
       </button>

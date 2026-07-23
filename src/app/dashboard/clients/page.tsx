@@ -7,7 +7,11 @@ import { deleteClientRecord } from './actions'
 export default async function ClientsPage() {
   const { profile } = await requireUser()
   const supabase = await createClient()
-  const { data: clients } = await supabase.from('clients').select('*').order('name')
+  const { data: clients } = await supabase
+    .from('clients')
+    .select('*')
+    .eq('active', true)
+    .order('name')
 
   return (
     <div>
@@ -42,7 +46,7 @@ export default async function ClientsPage() {
                 {canDelete(profile.role) && (
                   <form action={deleteClientRecord.bind(null, client.id)}>
                     <button type="submit" className="link-danger">
-                      Eliminar
+                      Archivar
                     </button>
                   </form>
                 )}

@@ -30,7 +30,7 @@ test('admin puede crear, editar y eliminar un cliente', async ({ page }) => {
 
   await page
     .getByRole('row', { name: /Cliente editado/ })
-    .getByRole('button', { name: 'Eliminar' })
+    .getByRole('button', { name: 'Archivar' })
     .click()
 
   await expect(page.getByText('Cliente editado')).not.toBeVisible()

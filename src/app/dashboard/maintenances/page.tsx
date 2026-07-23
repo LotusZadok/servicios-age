@@ -25,6 +25,7 @@ export default async function MaintenancesPage() {
           <tr className="border-b text-left text-sm">
             <th className="p-2">Fecha</th>
             <th className="p-2">Máquina</th>
+            <th className="p-2">Descripción</th>
             <th className="p-2">Tipo</th>
             <th className="p-2">Estado</th>
             <th className="p-2">Técnico</th>
@@ -37,6 +38,7 @@ export default async function MaintenancesPage() {
             <tr key={m.id} className="border-b text-sm">
               <td className="p-2"><span className="mono">{m.date}</span></td>
               <td className="p-2">{m.machines?.name}</td>
+              <td className="p-2">{m.description}</td>
               <td className="p-2">{m.is_corrective ? 'Correctivo' : 'Preventivo'}</td>
               <td className="p-2">{m.status}</td>
               <td className="p-2">{m.technician?.full_name}</td>

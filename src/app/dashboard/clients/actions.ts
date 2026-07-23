@@ -53,6 +53,19 @@ export async function deleteClientRecord(id: string) {
 
   const supabase = await createClient()
   await supabase.from('clients').update({ active: false }).eq('id', id)
+
+  // Offboarding: archiving a client also disables its portal login, if any,
+  // so an archived client can no longer sign in or view its data.
+  const admin = createAdminClient()
+  const { data: access } = await admin
+    .from('profiles')
+    .select('id')
+    .eq('client_id', id)
+    .maybeSingle()
+  if (access) {
+    await admin.auth.admin.updateUserById(access.id, { ban_duration: '876000h' })
+  }
+
   revalidatePath('/dashboard/clients')
 }
 

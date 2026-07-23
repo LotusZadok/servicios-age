@@ -10,6 +10,7 @@ export default async function PortalHome() {
     .from('clients')
     .select('*')
     .eq('id', profile.client_id ?? '')
+    .eq('active', true)
     .maybeSingle()
 
   const { data: machines } = await supabase

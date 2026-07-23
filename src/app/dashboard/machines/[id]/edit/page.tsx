@@ -13,11 +13,13 @@ export default async function EditMachinePage({
   const { error } = await searchParams
   const supabase = await createClient()
 
-  const [{ data: machine }, { data: brands }, { data: types }] = await Promise.all([
-    supabase.from('machines').select('*').eq('id', id).single(),
-    supabase.from('brands').select('*').order('name'),
-    supabase.from('machine_types').select('*').order('name'),
-  ])
+  const [{ data: machine }, { data: brands }, { data: types }, { data: clients }] =
+    await Promise.all([
+      supabase.from('machines').select('*').eq('id', id).single(),
+      supabase.from('brands').select('*').eq('active', true).order('name'),
+      supabase.from('machine_types').select('*').eq('active', true).order('name'),
+      supabase.from('clients').select('*').eq('active', true).order('name'),
+    ])
 
   if (!machine) {
     notFound()
@@ -53,6 +55,17 @@ export default async function EditMachinePage({
         />
       </div>
       <div>
+        <label htmlFor="model" className="block text-sm font-medium">
+          Modelo
+        </label>
+        <input
+          id="model"
+          name="model"
+          defaultValue={machine.model ?? ''}
+          className="mt-1 w-full rounded border px-3 py-2"
+        />
+      </div>
+      <div>
         <label htmlFor="brand_id" className="block text-sm font-medium">
           Marca
         </label>
@@ -84,6 +97,24 @@ export default async function EditMachinePage({
           {(types ?? []).map((type) => (
             <option key={type.id} value={type.id}>
               {type.name}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <label htmlFor="client_id" className="block text-sm font-medium">
+          Cliente dueño (opcional)
+        </label>
+        <select
+          id="client_id"
+          name="client_id"
+          defaultValue={machine.client_id ?? ''}
+          className="mt-1 w-full rounded border px-3 py-2"
+        >
+          <option value="">— Sin asignar —</option>
+          {(clients ?? []).map((client) => (
+            <option key={client.id} value={client.id}>
+              {client.name}
             </option>
           ))}
         </select>

@@ -10,12 +10,14 @@ export async function createMachine(formData: FormData) {
   const supabase = await createClient()
   const name = formData.get('name') as string
   const serial_number = formData.get('serial_number') as string
+  const model = (formData.get('model') as string) || null
   const brand_id = formData.get('brand_id') as string
   const type_id = formData.get('type_id') as string
+  const client_id = (formData.get('client_id') as string) || null
 
   const { error } = await supabase
     .from('machines')
-    .insert({ name, serial_number, brand_id, type_id })
+    .insert({ name, serial_number, model, brand_id, type_id, client_id })
 
   if (error) {
     redirect(`/dashboard/machines/new?error=${encodeURIComponent(error.message)}`)
@@ -29,12 +31,14 @@ export async function updateMachine(id: string, formData: FormData) {
   const supabase = await createClient()
   const name = formData.get('name') as string
   const serial_number = formData.get('serial_number') as string
+  const model = (formData.get('model') as string) || null
   const brand_id = formData.get('brand_id') as string
   const type_id = formData.get('type_id') as string
+  const client_id = (formData.get('client_id') as string) || null
 
   const { error } = await supabase
     .from('machines')
-    .update({ name, serial_number, brand_id, type_id })
+    .update({ name, serial_number, model, brand_id, type_id, client_id })
     .eq('id', id)
 
   if (error) {
@@ -53,6 +57,6 @@ export async function deleteMachine(id: string) {
   }
 
   const supabase = await createClient()
-  await supabase.from('machines').delete().eq('id', id)
+  await supabase.from('machines').update({ active: false }).eq('id', id)
   revalidatePath('/dashboard/machines')
 }

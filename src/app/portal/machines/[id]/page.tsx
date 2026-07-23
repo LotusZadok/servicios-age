@@ -14,6 +14,7 @@ export default async function PortalMachinePage({ params }: { params: Promise<{ 
     .select('*, brands(name), machine_types(name)')
     .eq('id', id)
     .eq('client_id', profile.client_id ?? '')
+    .eq('active', true)
     .maybeSingle()
 
   if (!machine) {

@@ -3,7 +3,8 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { requireUser } from '@/lib/auth'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { requireUser, requireAdmin } from '@/lib/auth'
 import { canDelete } from '@/lib/permissions'
 
 export async function createClientRecord(formData: FormData) {
@@ -53,4 +54,44 @@ export async function deleteClientRecord(id: string) {
   const supabase = await createClient()
   await supabase.from('clients').update({ active: false }).eq('id', id)
   revalidatePath('/dashboard/clients')
+}
+
+export async function grantPortalAccess(clientId: string, formData: FormData) {
+  await requireAdmin()
+
+  const email = formData.get('email') as string
+  const password = formData.get('password') as string
+  const fullName = formData.get('full_name') as string
+
+  const admin = createAdminClient()
+
+  const { data, error } = await admin.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+  })
+
+  if (error || !data.user) {
+    redirect(
+      `/dashboard/clients/${clientId}/edit?error=${encodeURIComponent(error?.message ?? 'Error desconocido')}`
+    )
+  }
+
+  const { error: profileError } = await admin.from('profiles').insert({
+    id: data.user.id,
+    full_name: fullName,
+    role: 'cliente',
+    client_id: clientId,
+  })
+
+  if (profileError) {
+    // Roll back the orphaned auth user so the email stays reusable.
+    await admin.auth.admin.deleteUser(data.user.id)
+    redirect(
+      `/dashboard/clients/${clientId}/edit?error=${encodeURIComponent(profileError.message)}`
+    )
+  }
+
+  revalidatePath(`/dashboard/clients/${clientId}/edit`)
+  redirect(`/dashboard/clients/${clientId}/edit`)
 }

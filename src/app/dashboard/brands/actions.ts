@@ -9,8 +9,9 @@ import { canDelete } from '@/lib/permissions'
 export async function createBrand(formData: FormData) {
   const supabase = await createClient()
   const name = formData.get('name') as string
+  const description = (formData.get('description') as string) || null
 
-  const { error } = await supabase.from('brands').insert({ name })
+  const { error } = await supabase.from('brands').insert({ name, description })
 
   if (error) {
     redirect(`/dashboard/brands/new?error=${encodeURIComponent(error.message)}`)
@@ -23,8 +24,9 @@ export async function createBrand(formData: FormData) {
 export async function updateBrand(id: string, formData: FormData) {
   const supabase = await createClient()
   const name = formData.get('name') as string
+  const description = (formData.get('description') as string) || null
 
-  const { error } = await supabase.from('brands').update({ name }).eq('id', id)
+  const { error } = await supabase.from('brands').update({ name, description }).eq('id', id)
 
   if (error) {
     redirect(`/dashboard/brands/${id}/edit?error=${encodeURIComponent(error.message)}`)
@@ -42,6 +44,6 @@ export async function deleteBrand(id: string) {
   }
 
   const supabase = await createClient()
-  await supabase.from('brands').delete().eq('id', id)
+  await supabase.from('brands').update({ active: false }).eq('id', id)
   revalidatePath('/dashboard/brands')
 }

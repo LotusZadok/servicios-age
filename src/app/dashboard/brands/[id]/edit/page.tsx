@@ -36,6 +36,17 @@ export default async function EditBrandPage({
           className="mt-1 w-full rounded border px-3 py-2"
         />
       </div>
+      <div>
+        <label htmlFor="description" className="block text-sm font-medium">
+          Descripción
+        </label>
+        <input
+          id="description"
+          name="description"
+          defaultValue={brand.description ?? ''}
+          className="mt-1 w-full rounded border px-3 py-2"
+        />
+      </div>
       <button type="submit" className="btn btn-primary">
         Guardar
       </button>

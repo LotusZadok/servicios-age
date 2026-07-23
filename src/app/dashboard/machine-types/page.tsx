@@ -7,7 +7,11 @@ import { deleteMachineType } from './actions'
 export default async function MachineTypesPage() {
   const { profile } = await requireUser()
   const supabase = await createClient()
-  const { data: types } = await supabase.from('machine_types').select('*').order('name')
+  const { data: types } = await supabase
+    .from('machine_types')
+    .select('*')
+    .eq('active', true)
+    .order('name')
 
   return (
     <div>
@@ -24,6 +28,7 @@ export default async function MachineTypesPage() {
         <thead>
           <tr className="border-b text-left text-sm">
             <th className="p-2">Nombre</th>
+            <th className="p-2">Descripción</th>
             <th className="p-2" />
           </tr>
         </thead>
@@ -31,6 +36,7 @@ export default async function MachineTypesPage() {
           {(types ?? []).map((type) => (
             <tr key={type.id} className="border-b text-sm">
               <td className="p-2">{type.name}</td>
+              <td className="p-2">{type.description}</td>
               <td className="flex gap-3 p-2">
                 <Link href={`/dashboard/machine-types/${type.id}/edit`} className="link-edit">
                   Editar
@@ -38,7 +44,7 @@ export default async function MachineTypesPage() {
                 {canDelete(profile.role) && (
                   <form action={deleteMachineType.bind(null, type.id)}>
                     <button type="submit" className="link-danger">
-                      Eliminar
+                      Archivar
                     </button>
                   </form>
                 )}

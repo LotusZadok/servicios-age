@@ -7,7 +7,11 @@ import { deleteBrand } from './actions'
 export default async function BrandsPage() {
   const { profile } = await requireUser()
   const supabase = await createClient()
-  const { data: brands } = await supabase.from('brands').select('*').order('name')
+  const { data: brands } = await supabase
+    .from('brands')
+    .select('*')
+    .eq('active', true)
+    .order('name')
 
   return (
     <div>
@@ -24,6 +28,7 @@ export default async function BrandsPage() {
         <thead>
           <tr className="border-b text-left text-sm">
             <th className="p-2">Nombre</th>
+            <th className="p-2">Descripción</th>
             <th className="p-2" />
           </tr>
         </thead>
@@ -31,6 +36,7 @@ export default async function BrandsPage() {
           {(brands ?? []).map((brand) => (
             <tr key={brand.id} className="border-b text-sm">
               <td className="p-2">{brand.name}</td>
+              <td className="p-2">{brand.description}</td>
               <td className="flex gap-3 p-2">
                 <Link href={`/dashboard/brands/${brand.id}/edit`} className="link-edit">
                   Editar
@@ -38,7 +44,7 @@ export default async function BrandsPage() {
                 {canDelete(profile.role) && (
                   <form action={deleteBrand.bind(null, brand.id)}>
                     <button type="submit" className="link-danger">
-                      Eliminar
+                      Archivar
                     </button>
                   </form>
                 )}

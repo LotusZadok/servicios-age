@@ -9,8 +9,9 @@ import { canDelete } from '@/lib/permissions'
 export async function createMachineType(formData: FormData) {
   const supabase = await createClient()
   const name = formData.get('name') as string
+  const description = (formData.get('description') as string) || null
 
-  const { error } = await supabase.from('machine_types').insert({ name })
+  const { error } = await supabase.from('machine_types').insert({ name, description })
 
   if (error) {
     redirect(`/dashboard/machine-types/new?error=${encodeURIComponent(error.message)}`)
@@ -23,8 +24,12 @@ export async function createMachineType(formData: FormData) {
 export async function updateMachineType(id: string, formData: FormData) {
   const supabase = await createClient()
   const name = formData.get('name') as string
+  const description = (formData.get('description') as string) || null
 
-  const { error } = await supabase.from('machine_types').update({ name }).eq('id', id)
+  const { error } = await supabase
+    .from('machine_types')
+    .update({ name, description })
+    .eq('id', id)
 
   if (error) {
     redirect(`/dashboard/machine-types/${id}/edit?error=${encodeURIComponent(error.message)}`)
@@ -42,6 +47,6 @@ export async function deleteMachineType(id: string) {
   }
 
   const supabase = await createClient()
-  await supabase.from('machine_types').delete().eq('id', id)
+  await supabase.from('machine_types').update({ active: false }).eq('id', id)
   revalidatePath('/dashboard/machine-types')
 }

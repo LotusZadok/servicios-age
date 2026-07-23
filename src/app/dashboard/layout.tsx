@@ -1,4 +1,4 @@
-import { requireUser } from '@/lib/auth'
+import { requireStaff } from '@/lib/auth'
 import { canManageUsers } from '@/lib/permissions'
 import { logout } from './actions'
 import { NavLink } from './nav-link'
@@ -8,7 +8,7 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode
 }) {
-  const { profile } = await requireUser()
+  const { profile } = await requireStaff()
 
   return (
     <div className="min-h-screen">
@@ -22,6 +22,7 @@ export default async function DashboardLayout({
           <nav className="order-3 flex w-full flex-wrap items-center gap-x-5 gap-y-2 border-t pt-3 sm:order-none sm:w-auto sm:border-0 sm:pt-0">
             <NavLink href="/dashboard/clients">Clientes</NavLink>
             <NavLink href="/dashboard/machines">Máquinas</NavLink>
+            <NavLink href="/dashboard/maintenances">Mantenimientos</NavLink>
             <NavLink href="/dashboard/brands">Marcas</NavLink>
             <NavLink href="/dashboard/machine-types">Tipos</NavLink>
             <NavLink href="/dashboard/reports">Reportes</NavLink>

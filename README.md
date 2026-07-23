@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AGServicios — Herramienta interna (Fase 1)
 
-## Getting Started
+Sistema de gestión de clientes, máquinas, marcas y tipos de maquinaria para el
+negocio de alquiler/servicio de maquinaria. Reemplaza el proyecto original
+(Android/Flask/SQL Server, en `AGServicios-main`) con una app web Next.js +
+Supabase.
 
-First, run the development server:
+Diseño: `docs/superpowers/specs/2026-07-23-gestion-maquinaria-web-fase1-design.md`
+Plan de implementación: `docs/superpowers/plans/2026-07-23-fase1-herramienta-interna.md`
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Requisitos
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Node.js 20+
+- Docker Desktop (para Supabase local)
+- Cuenta de Supabase (capa gratuita) para producción
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Desarrollo local
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. `npm install`
+2. `npx supabase start` — levanta Postgres/Auth local vía Docker
+3. Copiar `.env.local.example` a `.env.local` y llenar con las claves que imprime
+   `supabase start`
+4. `npx tsx scripts/seed-admin.ts <email> <password> "<nombre>"` — crea el primer
+   usuario admin (solo la primera vez)
+5. `npm run dev` — abre `http://localhost:3000`
 
-## Learn More
+## Tests
 
-To learn more about Next.js, take a look at the following resources:
+- `npm run test:unit` — Vitest (lógica de permisos)
+- `npm run test:e2e` — Playwright (requiere `E2E_ADMIN_EMAIL`/`E2E_ADMIN_PASSWORD`
+  en `.env.local`, apuntando a un admin creado con el script de seed)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Despliegue
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Crear un proyecto en [supabase.com](https://supabase.com)
+2. `npx supabase link --project-ref <ref>`
+3. `npx supabase db push` — aplica las migraciones al proyecto en la nube
+4. Correr `scripts/seed-admin.ts` apuntando a las credenciales de producción para
+   crear el primer admin
+5. Desplegar este repo en [Vercel](https://vercel.com), configurando
+   `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, y
+   `SUPABASE_SERVICE_ROLE_KEY` como variables de entorno del proyecto (nunca
+   hardcodeadas en el código)

@@ -1,8 +1,14 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import type { Database } from '@/lib/database.types'
+import type { Role } from '@/lib/permissions'
 
-type Profile = Database['public']['Tables']['profiles']['Row']
+// The generated DB type widens the check-constrained `role` column to `string`.
+// The DB constraint guarantees it is a valid Role, so we narrow it here once,
+// giving every caller of requireUser/requireAdmin a properly typed role.
+type Profile = Omit<Database['public']['Tables']['profiles']['Row'], 'role'> & {
+  role: Role
+}
 
 export async function requireUser() {
   const supabase = await createClient()

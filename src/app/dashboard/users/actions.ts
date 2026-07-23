@@ -34,6 +34,8 @@ export async function createUser(formData: FormData) {
   })
 
   if (profileError) {
+    // Roll back the orphaned auth user so the email stays reusable.
+    await admin.auth.admin.deleteUser(data.user.id)
     redirect(`/dashboard/users/new?error=${encodeURIComponent(profileError.message)}`)
   }
 
@@ -46,6 +48,24 @@ export async function updateUserRole(id: string, formData: FormData) {
 
   const role = formData.get('role') as string
   const admin = createAdminClient()
+
+  // Prevent demoting the last remaining admin, which would lock everyone out
+  // of user management (the /dashboard/users routes are admin-only).
+  if (role !== 'admin') {
+    const { data: admins } = await admin
+      .from('profiles')
+      .select('id')
+      .eq('role', 'admin')
+
+    const isLastAdmin =
+      admins != null && admins.length <= 1 && admins.some((a) => a.id === id)
+
+    if (isLastAdmin) {
+      redirect(
+        `/dashboard/users?error=${encodeURIComponent('No puedes quitar el rol al último administrador.')}`
+      )
+    }
+  }
 
   const { error } = await admin.from('profiles').update({ role }).eq('id', id)
 

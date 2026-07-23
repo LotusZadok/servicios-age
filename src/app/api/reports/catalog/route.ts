@@ -3,7 +3,17 @@ import { createClient } from '@/lib/supabase/server'
 import { requireUser } from '@/lib/auth'
 
 function toCsvRow(values: (string | null | undefined)[]) {
-  return values.map((v) => `"${(v ?? '').replace(/"/g, '""')}"`).join(',')
+  return values
+    .map((v) => {
+      let s = v ?? ''
+      // Neutralize spreadsheet formula injection: a leading =, +, -, @, or
+      // control char can be executed as a formula when opened in Excel.
+      if (/^[=+\-@\t\r]/.test(s)) {
+        s = `'${s}`
+      }
+      return `"${s.replace(/"/g, '""')}"`
+    })
+    .join(',')
 }
 
 export async function GET() {

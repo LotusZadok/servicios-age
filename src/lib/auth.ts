@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import type { Database } from '@/lib/database.types'
-import type { Role } from '@/lib/permissions'
+import { isStaff, type Role } from '@/lib/permissions'
 
 // The generated DB type widens the check-constrained `role` column to `string`.
 // The DB constraint guarantees it is a valid Role, so we narrow it here once,
@@ -37,6 +37,26 @@ export async function requireAdmin() {
   const { user, profile } = await requireUser()
 
   if (profile.role !== 'admin') {
+    redirect('/dashboard')
+  }
+
+  return { user, profile }
+}
+
+export async function requireStaff() {
+  const { user, profile } = await requireUser()
+
+  if (!isStaff(profile.role)) {
+    redirect('/portal')
+  }
+
+  return { user, profile }
+}
+
+export async function requireClient() {
+  const { user, profile } = await requireUser()
+
+  if (profile.role !== 'cliente') {
     redirect('/dashboard')
   }
 

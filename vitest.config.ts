@@ -5,5 +5,7 @@ export default defineConfig({
   plugins: [tsconfigPaths()],
   test: {
     environment: 'node',
+    // Unit tests only; Playwright specs under tests/e2e are run via `test:e2e`.
+    include: ['tests/unit/**/*.test.ts'],
   },
 })

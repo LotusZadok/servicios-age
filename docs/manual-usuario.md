@@ -91,6 +91,16 @@ cliente dueño), así que no se captura por separado.
 
 Los mantenimientos aparecen en el portal del cliente dueño de la máquina.
 
+### Solicitudes de clientes (estado "solicitado")
+Un cliente puede **solicitar** un mantenimiento desde el portal, en la página de su
+máquina (solo una descripción de lo que necesita). Llega como estado **solicitado**:
+- Aparece **destacada y primero** en la lista de Mantenimientos, y la navegación
+  muestra un **contador** de solicitudes pendientes (ej. "Mantenimientos (3)").
+- El staff la **agenda** abriéndola y cambiando el estado a *programado*, con fecha,
+  técnico y costo; o la **cancela** (estado *cancelado*) si no se realizará.
+- El cliente solo puede crear la solicitud: no puede editarla ni cancelarla; ve su
+  avance en el historial de la máquina.
+
 ---
 
 ## 6. Gestión de usuarios internos (solo admin)
@@ -129,8 +139,9 @@ El cliente entra por el mismo login y llega a **su portal**:
 - Al abrir una máquina: su **historial de mantenimientos** (fecha, tipo, estado,
   descripción).
 
-El cliente **no puede editar nada** ni ver datos de otros clientes. (Editar su ficha
-o solicitar mantenimientos se evaluará en una fase futura.)
+El cliente no ve datos de otros clientes. Sí puede **solicitar un mantenimiento**
+desde la página de cada máquina (ver sección 5); editar su propia ficha se evaluará en
+una fase futura.
 
 ---
 

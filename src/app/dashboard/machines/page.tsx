@@ -24,6 +24,12 @@ export default async function MachinesPage() {
           Nueva máquina
         </Link>
       </div>
+      {(machines ?? []).length === 0 ? (
+        <div className="empty">
+          <span className="empty-title">Sin máquinas</span>
+          <span className="empty-hint">Crea la primera con “Nueva máquina”.</span>
+        </div>
+      ) : (
       <table className="w-full border-collapse bg-white">
         <thead>
           <tr className="border-b text-left text-sm">
@@ -61,6 +67,7 @@ export default async function MachinesPage() {
           ))}
         </tbody>
       </table>
+      )}
     </div>
   )
 }

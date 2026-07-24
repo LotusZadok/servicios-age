@@ -24,6 +24,12 @@ export default async function ClientsPage() {
           Nuevo cliente
         </Link>
       </div>
+      {(clients ?? []).length === 0 ? (
+        <div className="empty">
+          <span className="empty-title">Sin clientes</span>
+          <span className="empty-hint">Crea el primero con “Nuevo cliente”.</span>
+        </div>
+      ) : (
       <table className="w-full border-collapse bg-white">
         <thead>
           <tr className="border-b text-left text-sm">
@@ -55,6 +61,7 @@ export default async function ClientsPage() {
           ))}
         </tbody>
       </table>
+      )}
     </div>
   )
 }

@@ -34,20 +34,38 @@ export default async function PortalHome() {
 
       <section>
         <h2 className="mb-3 text-xl font-semibold">Mis máquinas</h2>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {(machines ?? []).map((m) => (
-            <Link key={m.id} href={`/portal/machines/${m.id}`} className="card p-5 transition-shadow hover:shadow-[var(--shadow)]">
-              <span className="text-base font-semibold">{m.name}</span>
-              <p className="mt-1 text-sm text-[var(--muted)]">
-                {m.brands?.name} · {m.machine_types?.name}
-                {m.model ? ` · ${m.model}` : ''}
-              </p>
-            </Link>
-          ))}
-          {(machines ?? []).length === 0 && (
-            <p className="text-sm text-[var(--muted)]">No tienes máquinas registradas.</p>
-          )}
-        </div>
+        {(machines ?? []).length === 0 ? (
+          <div className="empty">
+            <span className="empty-title">Aún no tienes máquinas registradas</span>
+            <span className="empty-hint">
+              Cuando el equipo de AGServicios te asigne una, aparecerá aquí.
+            </span>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {(machines ?? []).map((m) => (
+              <Link
+                key={m.id}
+                href={`/portal/machines/${m.id}`}
+                className="group card flex flex-col gap-3 p-5 transition-shadow hover:shadow-[var(--shadow)]"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <span className="text-base font-semibold">{m.name}</span>
+                  {m.serial_number && (
+                    <span className="mono text-xs text-[var(--muted)]">{m.serial_number}</span>
+                  )}
+                </div>
+                <p className="text-sm text-[var(--muted)]">
+                  {m.brands?.name} · {m.machine_types?.name}
+                  {m.model ? ` · ${m.model}` : ''}
+                </p>
+                <span className="mono mt-auto text-xs text-[var(--accent-ink)] transition-transform group-hover:translate-x-0.5">
+                  Ver historial →
+                </span>
+              </Link>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   )

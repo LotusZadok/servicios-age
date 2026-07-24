@@ -2,7 +2,8 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { requireUser } from '@/lib/auth'
 import { canDelete } from '@/lib/permissions'
-import { isRequest, sortRequestsFirst } from '@/lib/maintenances'
+import { sortRequestsFirst } from '@/lib/maintenances'
+import { StatusBadge } from '@/components/status-badge'
 import { deleteMaintenance } from './actions'
 
 export default async function MaintenancesPage() {
@@ -23,6 +24,14 @@ export default async function MaintenancesPage() {
           Nuevo mantenimiento
         </Link>
       </div>
+      {ordered.length === 0 ? (
+        <div className="empty">
+          <span className="empty-title">Sin mantenimientos</span>
+          <span className="empty-hint">
+            Registra uno con “Nuevo mantenimiento”, o espera a que un cliente solicite servicio.
+          </span>
+        </div>
+      ) : (
       <table className="w-full border-collapse bg-white">
         <thead>
           <tr className="border-b text-left text-sm">
@@ -32,7 +41,7 @@ export default async function MaintenancesPage() {
             <th className="p-2">Tipo</th>
             <th className="p-2">Estado</th>
             <th className="p-2">Técnico</th>
-            <th className="p-2">Costo</th>
+            <th className="p-2 num">Costo</th>
             <th className="p-2" />
           </tr>
         </thead>
@@ -43,17 +52,9 @@ export default async function MaintenancesPage() {
               <td className="p-2">{m.machines?.name}</td>
               <td className="p-2">{m.description}</td>
               <td className="p-2">{m.is_corrective ? 'Correctivo' : 'Preventivo'}</td>
-              <td className="p-2">
-                {isRequest(m.status) ? (
-                  <span className="rounded bg-[var(--accent-weak)] px-2 py-0.5 text-xs font-medium text-[var(--accent-ink)]">
-                    Solicitado
-                  </span>
-                ) : (
-                  m.status
-                )}
-              </td>
+              <td className="p-2"><StatusBadge status={m.status} /></td>
               <td className="p-2">{m.technician?.full_name}</td>
-              <td className="p-2"><span className="mono">{m.cost ?? ''}</span></td>
+              <td className="p-2 num"><span className="mono">{m.cost ?? ''}</span></td>
               <td className="flex gap-3 p-2">
                 <Link href={`/dashboard/maintenances/${m.id}/edit`} className="link-edit">
                   Editar
@@ -70,6 +71,7 @@ export default async function MaintenancesPage() {
           ))}
         </tbody>
       </table>
+      )}
     </div>
   )
 }

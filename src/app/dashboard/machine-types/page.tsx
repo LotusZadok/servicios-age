@@ -24,6 +24,12 @@ export default async function MachineTypesPage() {
           Nuevo tipo
         </Link>
       </div>
+      {(types ?? []).length === 0 ? (
+        <div className="empty">
+          <span className="empty-title">Sin tipos de maquinaria</span>
+          <span className="empty-hint">Crea el primero con “Nuevo tipo”.</span>
+        </div>
+      ) : (
       <table className="w-full border-collapse bg-white">
         <thead>
           <tr className="border-b text-left text-sm">
@@ -53,6 +59,7 @@ export default async function MachineTypesPage() {
           ))}
         </tbody>
       </table>
+      )}
     </div>
   )
 }

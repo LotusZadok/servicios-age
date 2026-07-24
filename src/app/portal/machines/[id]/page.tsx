@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { requireClient } from '@/lib/auth'
 import { createClient } from '@/lib/supabase/server'
+import { StatusBadge } from '@/components/status-badge'
 import { requestMaintenance } from './actions'
 
 export default async function PortalMachinePage({
@@ -68,29 +69,35 @@ export default async function PortalMachinePage({
       </section>
 
       <h2 className="mb-3 mt-8 text-xl font-semibold">Historial de mantenimientos</h2>
-      <table className="w-full border-collapse bg-white">
-        <thead>
-          <tr className="border-b text-left text-sm">
-            <th className="p-2">Fecha</th>
-            <th className="p-2">Tipo</th>
-            <th className="p-2">Estado</th>
-            <th className="p-2">Descripción</th>
-          </tr>
-        </thead>
-        <tbody>
-          {(maintenances ?? []).map((m) => (
-            <tr key={m.id} className="border-b text-sm">
-              <td className="p-2"><span className="mono">{m.date ?? '—'}</span></td>
-              <td className="p-2">{m.is_corrective ? 'Correctivo' : 'Preventivo'}</td>
-              <td className="p-2">{m.status}</td>
-              <td className="p-2">{m.description}</td>
+      {(maintenances ?? []).length === 0 ? (
+        <div className="empty">
+          <span className="empty-title">Sin mantenimientos registrados</span>
+          <span className="empty-hint">
+            Cuando solicites uno o el equipo agende un servicio, aparecerá aquí.
+          </span>
+        </div>
+      ) : (
+        <table className="w-full border-collapse bg-white">
+          <thead>
+            <tr className="border-b text-left text-sm">
+              <th className="p-2">Fecha</th>
+              <th className="p-2">Tipo</th>
+              <th className="p-2">Estado</th>
+              <th className="p-2">Descripción</th>
             </tr>
-          ))}
-          {(maintenances ?? []).length === 0 && (
-            <tr><td className="p-2 text-sm text-[var(--muted)]" colSpan={4}>Sin mantenimientos registrados.</td></tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {(maintenances ?? []).map((m) => (
+              <tr key={m.id} className="border-b text-sm">
+                <td className="p-2"><span className="mono">{m.date ?? '—'}</span></td>
+                <td className="p-2">{m.is_corrective ? 'Correctivo' : 'Preventivo'}</td>
+                <td className="p-2"><StatusBadge status={m.status} /></td>
+                <td className="p-2">{m.description}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   )
 }

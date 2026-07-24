@@ -23,6 +23,16 @@
   --danger: #a92318;
   --danger-weak: #f7e6e3;
 
+  /* Maintenance status colors (semantic, distinct from the accent) */
+  --st-prog: #2b5d9c;
+  --st-prog-weak: #e7eef7;
+  --st-proc: #8a6300;
+  --st-proc-weak: #f5eed9;
+  --st-done: #1f6f43;
+  --st-done-weak: #e6f1ea;
+  --st-cancel: #6b6f76;
+  --st-cancel-weak: #ededea;
+
   --ring: 0 0 0 3px rgba(191, 84, 21, 0.28);
   --radius: 10px;
   --radius-sm: 7px;
@@ -301,6 +311,54 @@ tbody tr:hover {
   font-size: 0.82rem;
   color: var(--ink-soft);
 }
+
+/* ---------- Status chips ---------- */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-plex-mono), ui-monospace, monospace;
+  font-size: 0.66rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.16rem 0.5rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.status::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.status-solicitado { color: var(--accent-ink); background: var(--accent-weak); }
+.status-programado { color: var(--st-prog); background: var(--st-prog-weak); }
+.status-en_proceso { color: var(--st-proc); background: var(--st-proc-weak); }
+.status-completado { color: var(--st-done); background: var(--st-done-weak); }
+.status-cancelado  { color: var(--st-cancel); background: var(--st-cancel-weak); }
+
+/* ---------- Empty states ---------- */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  color: var(--muted);
+}
+.empty .empty-title { color: var(--ink-soft); font-weight: 500; font-size: 0.95rem; }
+.empty .empty-hint { font-size: 0.85rem; }
+
+/* ---------- Table density: zebra + numeric alignment ---------- */
+tbody tr:nth-child(even) { background: color-mix(in srgb, var(--surface-2) 55%, transparent); }
+tbody tr:hover { background: var(--surface-2); }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 
 /* ---------- Responsive: let wide tables scroll instead of the page ---------- */
 @media (max-width: 640px) {

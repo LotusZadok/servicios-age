@@ -7,8 +7,12 @@ import { requireClient } from '@/lib/auth'
 
 export async function requestMaintenance(machineId: string, formData: FormData) {
   const { profile } = await requireClient()
-  const description = formData.get('description') as string
+  const description = ((formData.get('description') as string) ?? '').trim()
   const supabase = await createClient()
+
+  if (!description) {
+    redirect(`/portal/machines/${machineId}?error=${encodeURIComponent('Describe qué necesita.')}`)
+  }
 
   // Defense in depth: confirm the machine belongs to this client and is active.
   const { data: machine } = await supabase

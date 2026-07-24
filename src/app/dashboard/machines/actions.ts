@@ -3,10 +3,12 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { requireUser } from '@/lib/auth'
+import { requireUser, requireStaff } from '@/lib/auth'
 import { canDelete } from '@/lib/permissions'
 
 export async function createMachine(formData: FormData) {
+  await requireStaff()
+
   const supabase = await createClient()
   const name = formData.get('name') as string
   const serial_number = formData.get('serial_number') as string
@@ -28,6 +30,8 @@ export async function createMachine(formData: FormData) {
 }
 
 export async function updateMachine(id: string, formData: FormData) {
+  await requireStaff()
+
   const supabase = await createClient()
   const name = formData.get('name') as string
   const serial_number = formData.get('serial_number') as string

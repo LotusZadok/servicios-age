@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { requireUser } from '@/lib/auth'
+import { requireUser, requireStaff } from '@/lib/auth'
 import { canDelete } from '@/lib/permissions'
 
 function parseForm(formData: FormData) {
@@ -19,6 +19,8 @@ function parseForm(formData: FormData) {
 }
 
 export async function createMaintenance(formData: FormData) {
+  await requireStaff()
+
   const supabase = await createClient()
   const { error } = await supabase.from('maintenances').insert(parseForm(formData))
 
@@ -31,6 +33,8 @@ export async function createMaintenance(formData: FormData) {
 }
 
 export async function updateMaintenance(id: string, formData: FormData) {
+  await requireStaff()
+
   const supabase = await createClient()
   const { error } = await supabase.from('maintenances').update(parseForm(formData)).eq('id', id)
 

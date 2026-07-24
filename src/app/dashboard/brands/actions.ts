@@ -3,10 +3,12 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { requireUser } from '@/lib/auth'
+import { requireUser, requireStaff } from '@/lib/auth'
 import { canDelete } from '@/lib/permissions'
 
 export async function createBrand(formData: FormData) {
+  await requireStaff()
+
   const supabase = await createClient()
   const name = formData.get('name') as string
   const description = (formData.get('description') as string) || null
@@ -22,6 +24,8 @@ export async function createBrand(formData: FormData) {
 }
 
 export async function updateBrand(id: string, formData: FormData) {
+  await requireStaff()
+
   const supabase = await createClient()
   const name = formData.get('name') as string
   const description = (formData.get('description') as string) || null

@@ -114,6 +114,11 @@ Sección **"Usuarios"**:
 
 Comparte el correo y la contraseña temporal con el cliente para que entre al portal.
 
+> **Un solo acceso por cliente.** Cada cliente puede tener como máximo **un** login de
+> portal. Si se intenta crear un segundo (por ejemplo, dos admins habilitando acceso
+> a la vez, o un doble clic), la base de datos lo rechaza y verás un mensaje de error.
+> Esto evita accesos duplicados que impedirían dar de baja correctamente al cliente.
+
 ---
 
 ## 8. Portal del cliente (solo lectura)
@@ -138,9 +143,12 @@ clientes, máquinas, marcas y tipos. Se abre en Excel.
 
 ## 10. Notas de seguridad (para referencia)
 
-- Los permisos se aplican en la **base de datos** (Row Level Security), no solo en la
-  pantalla: un cliente nunca puede leer ni modificar datos de otro cliente, aunque
-  intente rutas directas.
+- Los permisos se aplican en **dos capas**: en la aplicación (cada acción de creación
+  o edición verifica que quien la ejecuta sea admin o empleado) y en la **base de
+  datos** (Row Level Security). Un cliente nunca puede leer ni modificar datos de otro
+  cliente, aunque intente rutas directas.
 - Solo los administradores archivan registros y gestionan accesos.
+- Un cliente puede tener a lo sumo un acceso al portal (restricción en la base de
+  datos), lo que garantiza que archivarlo sí lo da de baja.
 - Las contraseñas y llaves nunca se guardan en el código; viven en variables de
   entorno del servidor.

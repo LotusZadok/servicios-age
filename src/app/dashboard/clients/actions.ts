@@ -4,10 +4,12 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { requireUser, requireAdmin } from '@/lib/auth'
+import { requireUser, requireAdmin, requireStaff } from '@/lib/auth'
 import { canDelete } from '@/lib/permissions'
 
 export async function createClientRecord(formData: FormData) {
+  await requireStaff()
+
   const supabase = await createClient()
   const name = formData.get('name') as string
   const email = formData.get('email') as string
@@ -25,6 +27,8 @@ export async function createClientRecord(formData: FormData) {
 }
 
 export async function updateClientRecord(id: string, formData: FormData) {
+  await requireStaff()
+
   const supabase = await createClient()
   const name = formData.get('name') as string
   const email = formData.get('email') as string

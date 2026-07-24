@@ -36,14 +36,16 @@ export async function MaintenanceFields({ defaults }: { defaults?: MaintenanceDe
       </div>
       <div>
         <label htmlFor="date" className="block text-sm font-medium">Fecha</label>
-        <input id="date" name="date" type="date" required defaultValue={defaults?.date ?? ''} className="mt-1 w-full rounded border px-3 py-2" />
+        <input id="date" name="date" type="date" defaultValue={defaults?.date ?? ''} className="mt-1 w-full rounded border px-3 py-2" />
       </div>
       <div>
         <label htmlFor="status" className="block text-sm font-medium">Estado</label>
         <select id="status" name="status" defaultValue={defaults?.status ?? 'programado'} className="mt-1 w-full rounded border px-3 py-2">
+          <option value="solicitado">Solicitado</option>
           <option value="programado">Programado</option>
           <option value="en_proceso">En proceso</option>
           <option value="completado">Completado</option>
+          <option value="cancelado">Cancelado</option>
         </select>
       </div>
       <div>

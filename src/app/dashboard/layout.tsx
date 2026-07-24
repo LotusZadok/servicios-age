@@ -1,5 +1,6 @@
 import { requireStaff } from '@/lib/auth'
 import { canManageUsers } from '@/lib/permissions'
+import { createClient } from '@/lib/supabase/server'
 import { logout } from './actions'
 import { NavLink } from './nav-link'
 
@@ -9,6 +10,13 @@ export default async function DashboardLayout({
   children: React.ReactNode
 }) {
   const { profile } = await requireStaff()
+  const supabase = await createClient()
+  const { count } = await supabase
+    .from('maintenances')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'solicitado')
+  const pending = count ?? 0
+  const maintenancesLabel = pending > 0 ? `Mantenimientos (${pending})` : 'Mantenimientos'
 
   return (
     <div className="min-h-screen">
@@ -22,7 +30,7 @@ export default async function DashboardLayout({
           <nav className="order-3 flex w-full flex-wrap items-center gap-x-5 gap-y-2 border-t pt-3 sm:order-none sm:w-auto sm:border-0 sm:pt-0">
             <NavLink href="/dashboard/clients">Clientes</NavLink>
             <NavLink href="/dashboard/machines">Máquinas</NavLink>
-            <NavLink href="/dashboard/maintenances">Mantenimientos</NavLink>
+            <NavLink href="/dashboard/maintenances">{maintenancesLabel}</NavLink>
             <NavLink href="/dashboard/brands">Marcas</NavLink>
             <NavLink href="/dashboard/machine-types">Tipos</NavLink>
             <NavLink href="/dashboard/reports">Reportes</NavLink>

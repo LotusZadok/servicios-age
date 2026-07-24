@@ -10,7 +10,7 @@ function parseForm(formData: FormData) {
   return {
     machine_id: formData.get('machine_id') as string,
     technician_id: (formData.get('technician_id') as string) || null,
-    date: formData.get('date') as string,
+    date: (formData.get('date') as string) || null,
     description: formData.get('description') as string,
     is_corrective: formData.get('is_corrective') === 'on',
     cost: formData.get('cost') ? Number(formData.get('cost')) : null,

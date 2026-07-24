@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 type MaintenanceDefaults = {
   machine_id?: string
   technician_id?: string | null
-  date?: string
+  date?: string | null
   description?: string
   is_corrective?: boolean
   cost?: number | null

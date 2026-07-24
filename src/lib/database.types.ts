@@ -174,7 +174,7 @@ export type Database = {
         Row: {
           cost: number | null
           created_at: string
-          date: string
+          date: string | null
           description: string
           id: string
           is_corrective: boolean
@@ -185,7 +185,7 @@ export type Database = {
         Insert: {
           cost?: number | null
           created_at?: string
-          date: string
+          date?: string | null
           description: string
           id?: string
           is_corrective?: boolean
@@ -196,7 +196,7 @@ export type Database = {
         Update: {
           cost?: number | null
           created_at?: string
-          date?: string
+          date?: string | null
           description?: string
           id?: string
           is_corrective?: boolean

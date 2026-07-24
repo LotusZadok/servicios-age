@@ -1,9 +1,17 @@
 import { notFound } from 'next/navigation'
 import { requireClient } from '@/lib/auth'
 import { createClient } from '@/lib/supabase/server'
+import { requestMaintenance } from './actions'
 
-export default async function PortalMachinePage({ params }: { params: Promise<{ id: string }> }) {
+export default async function PortalMachinePage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>
+  searchParams: Promise<{ error?: string }>
+}) {
   const { id } = await params
+  const { error } = await searchParams
   const { profile } = await requireClient()
   const supabase = await createClient()
 
@@ -25,7 +33,9 @@ export default async function PortalMachinePage({ params }: { params: Promise<{ 
     .from('maintenances')
     .select('*')
     .eq('machine_id', id)
-    .order('date', { ascending: false })
+    .order('created_at', { ascending: false })
+
+  const requestForMachine = requestMaintenance.bind(null, id)
 
   return (
     <div>
@@ -36,6 +46,26 @@ export default async function PortalMachinePage({ params }: { params: Promise<{ 
         {machine.model ? ` · ${machine.model}` : ''}
         {machine.serial_number ? ` · Serie ${machine.serial_number}` : ''}
       </p>
+
+      <section className="card mt-6 max-w-md p-5">
+        <h2 className="text-lg font-semibold">Solicitar mantenimiento</h2>
+        {error && <p className="mt-2 text-sm text-[var(--danger)]">{error}</p>}
+        <form action={requestForMachine} className="mt-3 space-y-3">
+          <div>
+            <label htmlFor="description" className="block text-sm font-medium">
+              ¿Qué necesita?
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              required
+              rows={3}
+              className="mt-1 w-full rounded border px-3 py-2"
+            />
+          </div>
+          <button type="submit" className="btn btn-primary">Enviar solicitud</button>
+        </form>
+      </section>
 
       <h2 className="mb-3 mt-8 text-xl font-semibold">Historial de mantenimientos</h2>
       <table className="w-full border-collapse bg-white">
@@ -50,7 +80,7 @@ export default async function PortalMachinePage({ params }: { params: Promise<{ 
         <tbody>
           {(maintenances ?? []).map((m) => (
             <tr key={m.id} className="border-b text-sm">
-              <td className="p-2"><span className="mono">{m.date}</span></td>
+              <td className="p-2"><span className="mono">{m.date ?? '—'}</span></td>
               <td className="p-2">{m.is_corrective ? 'Correctivo' : 'Preventivo'}</td>
               <td className="p-2">{m.status}</td>
               <td className="p-2">{m.description}</td>

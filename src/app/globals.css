@@ -1,45 +1,47 @@
 @import "tailwindcss";
 
 /* ============================================================
-   AGServicios — "Engineered" design system
-   Industrial-technical, refined light theme.
+   Servicios AGE — sistema de diseño
+   Blanco y negro con acento verde de marca.
    ============================================================ */
 
 :root {
-  /* Neutrals — warm paper over steel */
-  --bg: #f1efe9;
+  /* Neutros — blanco y negro puros */
+  --bg: #ffffff;
   --surface: #ffffff;
-  --surface-2: #f8f6f1;
-  --ink: #17181a;
-  --ink-soft: #34363a;
-  --muted: #6b6f76;
-  --line: #e4e1d8;
-  --line-strong: #d3cfc3;
+  --surface-2: #f6f7f6;
+  --ink: #000000;
+  --ink-soft: #383d39;
+  --muted: #6b7280;
+  --line: #e5e7e5;
+  --line-strong: #d1d5d1;
 
-  /* Safety-amber accent */
-  --accent: #bf5415;
-  --accent-ink: #8f3d0d;
-  --accent-weak: #f6eadf;
+  /* Acento de marca — verde Servicios AGE */
+  --accent: #16a045;
+  --accent-ink: #0d7a33;
+  --accent-weak: #e7f6ec;
   --danger: #a92318;
   --danger-weak: #f7e6e3;
 
-  /* Maintenance status colors (semantic, distinct from the accent) */
+  /* Colores de estado de mantenimiento */
+  --st-req: #9a4d0f;
+  --st-req-weak: #fbeee2;
   --st-prog: #2b5d9c;
   --st-prog-weak: #e7eef7;
   --st-proc: #8a6300;
   --st-proc-weak: #f5eed9;
-  --st-done: #1f6f43;
-  --st-done-weak: #e6f1ea;
-  --st-cancel: #6b6f76;
-  --st-cancel-weak: #ededea;
+  --st-done: var(--accent-ink);
+  --st-done-weak: var(--accent-weak);
+  --st-cancel: var(--muted);
+  --st-cancel-weak: #f0f1f0;
 
-  --ring: 0 0 0 3px rgba(191, 84, 21, 0.28);
+  --ring: 0 0 0 3px rgba(22, 160, 69, 0.28);
   --radius: 10px;
   --radius-sm: 7px;
-  --shadow-sm: 0 1px 2px rgba(23, 24, 26, 0.05);
-  --shadow: 0 6px 20px -8px rgba(23, 24, 26, 0.18);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow: 0 6px 20px -8px rgba(0, 0, 0, 0.22);
 
-  /* Tailwind token bridge */
+  /* Puente de tokens de Tailwind */
   --background: var(--bg);
   --foreground: var(--ink);
 }
@@ -58,11 +60,6 @@
 
 body {
   background-color: var(--bg);
-  /* faint engineering grid */
-  background-image:
-    linear-gradient(rgba(23, 24, 26, 0.022) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(23, 24, 26, 0.022) 1px, transparent 1px);
-  background-size: 30px 30px;
   color: var(--ink);
   font-family: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -333,7 +330,7 @@ tbody tr:hover {
   border-radius: 50%;
   background: currentColor;
 }
-.status-solicitado { color: var(--accent-ink); background: var(--accent-weak); }
+.status-solicitado { color: var(--st-req); background: var(--st-req-weak); }
 .status-programado { color: var(--st-prog); background: var(--st-prog-weak); }
 .status-en_proceso { color: var(--st-proc); background: var(--st-proc-weak); }
 .status-completado { color: var(--st-done); background: var(--st-done-weak); }

@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
 /* ============================================================
-   Servicios AGE — sistema de diseño
-   Blanco y negro con acento verde de marca.
+   Servicios AGE — design system
+   Black and white with a green brand accent.
    ============================================================ */
 
 :root {
-  /* Neutros — blanco y negro puros */
+  /* Neutrals — pure black and white */
   --bg: #ffffff;
   --surface: #ffffff;
   --surface-2: #f6f7f6;
@@ -16,14 +16,16 @@
   --line: #e5e7e5;
   --line-strong: #d1d5d1;
 
-  /* Acento de marca — verde Servicios AGE */
+  /* Brand accent — Servicios AGE green.
+     --accent is 3.41:1 on white: OK for non-text UI (focus ring, nav underline),
+     NOT for text. Use --accent-ink (5.46:1) for anything that renders as text. */
   --accent: #16a045;
   --accent-ink: #0d7a33;
   --accent-weak: #e7f6ec;
   --danger: #a92318;
   --danger-weak: #f7e6e3;
 
-  /* Colores de estado de mantenimiento */
+  /* Maintenance status colors */
   --st-req: #9a4d0f;
   --st-req-weak: #fbeee2;
   --st-prog: #2b5d9c;
@@ -32,7 +34,7 @@
   --st-proc-weak: #f5eed9;
   --st-done: var(--accent-ink);
   --st-done-weak: var(--accent-weak);
-  --st-cancel: var(--muted);
+  --st-cancel: #5b6270;
   --st-cancel-weak: #f0f1f0;
 
   --ring: 0 0 0 3px rgba(22, 160, 69, 0.28);
@@ -41,7 +43,7 @@
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
   --shadow: 0 6px 20px -8px rgba(0, 0, 0, 0.22);
 
-  /* Puente de tokens de Tailwind */
+  /* Tailwind token bridge */
   --background: var(--bg);
   --foreground: var(--ink);
 }
@@ -75,7 +77,7 @@ h3 {
 }
 
 ::selection {
-  background: var(--accent);
+  background: var(--accent-ink);
   color: #fff;
 }
 

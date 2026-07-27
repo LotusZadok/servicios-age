@@ -26,3 +26,14 @@ test('el login muestra el logo de la marca', async ({ page }) => {
   const logo = page.getByRole('img', { name: 'Servicios AGE' })
   await expect(logo).toBeVisible()
 })
+
+test('el dashboard usa el nombre Servicios AGE', async ({ page }) => {
+  await page.goto('/login')
+  await page.getByLabel('Correo').fill(process.env.E2E_ADMIN_EMAIL!)
+  await page.getByLabel('Contraseña').fill(process.env.E2E_ADMIN_PASSWORD!)
+  await page.getByRole('button', { name: 'Entrar' }).click()
+
+  await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 })
+  await expect(page).toHaveTitle(/Servicios AGE/)
+  await expect(page.getByText('catálogo de Servicios AGE')).toBeVisible()
+})

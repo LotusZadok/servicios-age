@@ -15,7 +15,7 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AGServicios",
+  title: "Servicios AGE",
   description: "Herramienta interna de gestión de maquinaria",
 };
 

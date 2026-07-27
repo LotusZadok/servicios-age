@@ -38,7 +38,7 @@ export default async function PortalHome() {
           <div className="empty">
             <span className="empty-title">Aún no tienes máquinas registradas</span>
             <span className="empty-hint">
-              Cuando el equipo de AGServicios te asigne una, aparecerá aquí.
+              Cuando el equipo de Servicios AGE te asigne una, aparecerá aquí.
             </span>
           </div>
         ) : (

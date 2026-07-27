@@ -62,7 +62,7 @@ export async function GET() {
   return new NextResponse(csv, {
     headers: {
       'Content-Type': 'text/csv; charset=utf-8',
-      'Content-Disposition': 'attachment; filename="catalogo-agservicios.csv"',
+      'Content-Disposition': 'attachment; filename="catalogo-servicios-age.csv"',
     },
   })
 }

@@ -253,12 +253,14 @@ En `src/app/globals.css`, reemplazá la regla `.brand-mark` completa por:
 
 ```css
 .brand-mark {
-  width: 1.7rem;
   height: 1.7rem;
+  width: auto;
   display: block;
   flex-shrink: 0;
 }
 ```
+
+**No lo hagas cuadrado.** `logo-mark.png` es 78×96 (proporción 0,81); fijar ancho y alto iguales achataría el glifo. Se restringe el alto y el ancho se deduce.
 
 Se van `border-radius`, `background`, `color`, `display: grid`, `place-items`, `font-size`, `font-weight` y el `box-shadow` interior: todos existían para dibujar la caja `AG`, que ya no está.
 

@@ -1,4 +1,4 @@
-# Manual de usuario — AGServicios
+# Manual de usuario — Servicios AGE
 
 Herramienta interna de gestión de maquinaria: clientes, máquinas, catálogo,
 mantenimientos y un portal de solo lectura para clientes.

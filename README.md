@@ -1,4 +1,4 @@
-# AGServicios — Herramienta interna (Fase 1)
+# Servicios AGE — Herramienta interna (Fase 1)
 
 Sistema de gestión de clientes, máquinas, marcas y tipos de maquinaria para el
 negocio de alquiler/servicio de maquinaria. Reemplaza el proyecto original

@@ -27,9 +27,10 @@ Cosas no obvias de este repo que necesitás saber antes de empezar:
 | Archivo | Responsabilidad | Acción |
 |---|---|---|
 | `src/app/globals.css` | Todos los tokens de color y clases de componente | Modificar |
-| `public/logo.svg` | Lockup completo, para el login | Crear |
-| `public/logo-mark.svg` | Marca cuadrada, para las navs | Crear |
-| `src/app/icon.svg` | Favicon (convención de metadata de App Router) | Crear |
+| `public/logo.png` | Lockup completo (494×240), para el login | Crear |
+| `public/logo-mark.png` | Glifo de la E (78×96), para las navs | Crear |
+| `src/app/icon.ico` | Favicon multitamaño 16/32/48 (convención de App Router) | Crear |
+| `src/app/apple-icon.png` | Icono de app 180×180 con la palabra AGE | Crear |
 | `src/app/favicon.ico` | Favicon viejo | Borrar |
 | `public/{file,globe,next,vercel,window}.svg` | Sobrantes del starter, sin referencias | Borrar |
 | `src/proxy.ts` | Matcher del middleware | Modificar (1 línea) |
@@ -180,124 +181,44 @@ git commit -m "feat(ui): adopt the Servicios AGE color palette"
 
 ---
 
-## Task 2: Assets del logo
+## Task 2: Assets del logo — ✅ HECHA (commit `9fbd411`)
 
-**Files:**
-- Create: `public/logo.svg`, `public/logo-mark.svg`, `src/app/icon.svg`
-- Create: `tests/e2e/branding.spec.ts`
-- Delete: `src/app/favicon.ico`, `public/{file,globe,next,vercel,window}.svg`
+**Esta task se ejecutó de forma distinta a como estaba planeada. Lo que sigue es el registro de lo que realmente se hizo, no instrucciones pendientes.**
 
-- [ ] **Step 1: Escribir el test que falla**
+### Por qué cambió el enfoque
 
-Crear `tests/e2e/branding.spec.ts`:
+El plan original hacía dibujar tres SVG a mano, aproximando el glifo del logo. Esa versión se implementó (commit `8ecc937`) y **estaba mal**: leí la E como barras separadas con una flecha dibujada encima, cuando en realidad es un **bloque sólido con la flecha calada en negativo**. Como la flecha era blanca sobre página blanca, en los huecos entre barras desaparecía y se veía cortada.
 
-```ts
-import { test, expect } from '@playwright/test'
+Después el usuario aportó el arte original. El archivo que envió (`Servicios_AGE.svg`, 108 KB) resultó **no ser vectorial**: era un PNG de 3000×3000 incrustado en base64 dentro de andamiaje SVG — 99% de los bytes eran datos de imagen y el único `<path>` era el rectángulo del `clipPath`.
 
-test('los assets del logo se sirven correctamente', async ({ page }) => {
-  for (const path of ['/logo.svg', '/logo-mark.svg']) {
-    const res = await page.request.get(path)
-    expect(res.status(), `${path} debería existir`).toBe(200)
-    expect(res.headers()['content-type']).toContain('svg')
-  }
-})
-```
+Trazarlo a mano se descartó por ser justamente lo que ya había fallado. En su lugar se generaron PNG a medida desde el arte de 3000px, porque **la app usa el logo en exactamente tres tamaños conocidos** y la escalabilidad infinita del vector no tiene ningún consumidor real acá.
 
-- [ ] **Step 2: Correr el test para verificar que falla**
+### Assets resultantes
 
-Run: `npx playwright test tests/e2e/branding.spec.ts`
-Expected: FAIL — `/logo.svg debería existir` recibe 404.
+| Archivo | Dimensiones | Peso | Contenido |
+|---|---|---|---|
+| `public/logo.png` | 494×240 | 18 KB | Lockup completo, 3× del alto de 80px del login |
+| `public/logo-mark.png` | 78×96 | 2,4 KB | Glifo de la E, para la marca de 27px de la nav |
+| `src/app/icon.ico` | 16/32/48 | 3,4 KB | Favicon multitamaño, cada uno renderizado a propósito |
+| `src/app/apple-icon.png` | 180×180 | 7,9 KB | Palabra AGE completa sobre placa negra |
 
-- [ ] **Step 3: Crear `public/logo-mark.svg`**
+Total ~32 KB, contra 108 KB del SVG en cada carga.
 
-Aproximación vectorial del glifo: barra negra superior, barras verdes escalonadas, flecha blanca ascendente.
+### Decisiones de diseño registradas
 
-```svg
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Servicios AGE">
-  <rect x="4" y="7" width="56" height="15" fill="#000000"/>
-  <rect x="20" y="27" width="40" height="13" fill="#16a045"/>
-  <rect x="4" y="45" width="56" height="13" fill="#16a045"/>
-  <path d="M10 51 L28 33 L36 41 L50 27" fill="none" stroke="#ffffff" stroke-width="7"/>
-  <path d="M56 20 L56 35 L41 20 Z" fill="#ffffff"/>
-</svg>
-```
+- **El favicon usa el glifo de la E, no la palabra AGE.** El usuario pidió AGE en los iconos, y se cumple en `apple-icon.png` (180px), donde se ve perfecto. Pero AGE tiene proporción 2,83:1 y a 16px —el tamaño real de la pestaña— colapsa en una mancha ilegible; se verificó renderizándolo y ampliándolo. El glifo de la E es 0,82:1, llena el cuadrado y se distingue. Los navegadores eligen el archivo según el contexto, así que se obtienen ambos.
+- **La marca de la nav también usa el glifo de la E**, no la palabra: va a 27px (tamaño chico) y además se muestra junto al texto "Servicios AGE", así que la palabra en la imagen sería redundante.
+- **El verde del arte original mide exactamente `#16a045`**, idéntico a `--accent` en `globals.css`. No hubo que reconciliar nada.
 
-- [ ] **Step 4: Crear `src/app/icon.svg`**
+### Verificación hecha
 
-Mismo dibujo, pero sobre fondo negro para que se lea en la pestaña del navegador. `src/app/icon.svg` es la convención de metadata del App Router: Next lo detecta y genera el `<link rel="icon">` automáticamente, sin configuración.
+`npx playwright test tests/e2e/branding.spec.ts` → 2 passed.
 
-```svg
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Servicios AGE">
-  <rect width="64" height="64" rx="12" fill="#000000"/>
-  <rect x="10" y="16" width="44" height="10" fill="#ffffff"/>
-  <rect x="22" y="30" width="32" height="9" fill="#16a045"/>
-  <rect x="10" y="43" width="44" height="9" fill="#16a045"/>
-  <path d="M15 46 L29 32 L35 38 L46 27" fill="none" stroke="#ffffff" stroke-width="5"/>
-  <path d="M50 22 L50 33 L39 22 Z" fill="#ffffff"/>
-</svg>
-```
+El test cubre dos cosas: que `/logo.png` y `/logo-mark.png` respondan 200 con content-type de imagen, y que el `<head>` declare un `<link rel="icon">` que efectivamente responda. Lo segundo confirma que la convención de iconos del App Router funciona en esta versión de Next — se verificó en lugar de asumirse, como advierte `AGENTS.md`.
 
-- [ ] **Step 5: Crear `public/logo.svg`**
+### Copia de respaldo
 
-Lockup completo para el login. El texto usa la familia tipográfica de la app con respaldo genérico, para que no dependa de que una fuente concreta esté instalada.
-
-```svg
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 210" role="img" aria-label="Servicios AGE">
-  <text x="210" y="40" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif"
-        font-size="30" font-weight="500" letter-spacing="15" fill="#000000">SERVICIOS</text>
-  <text x="20" y="170" font-family="IBM Plex Sans, Segoe UI, sans-serif"
-        font-size="130" font-weight="700" letter-spacing="-2" fill="#000000">AG</text>
-  <g transform="translate(268, 78) scale(1.45)">
-    <rect x="4" y="7" width="56" height="15" fill="#000000"/>
-    <rect x="20" y="27" width="40" height="13" fill="#16a045"/>
-    <rect x="4" y="45" width="56" height="13" fill="#16a045"/>
-    <path d="M10 51 L28 33 L36 41 L50 27" fill="none" stroke="#ffffff" stroke-width="7"/>
-    <path d="M56 20 L56 35 L41 20 Z" fill="#ffffff"/>
-  </g>
-</svg>
-```
-
-- [ ] **Step 6: Borrar los assets viejos**
-
-```bash
-git rm src/app/favicon.ico public/file.svg public/globe.svg public/next.svg public/vercel.svg public/window.svg
-```
-
-Los cinco SVG del starter no los referencia ningún archivo (verificado por búsqueda). `favicon.ico` lo reemplaza `src/app/icon.svg`.
-
-- [ ] **Step 7: Correr el test para verificar que pasa**
-
-Run: `npx playwright test tests/e2e/branding.spec.ts`
-Expected: PASS.
-
-- [ ] **Step 8: Confirmar que Next detecta el favicon**
-
-Esta es la única parte de la task que depende de una convención del framework en vez de un archivo estático, y `AGENTS.md` advierte que esta versión de Next puede diferir de lo que conocés. Verificalo en vez de asumirlo.
-
-Con `npm run dev` corriendo, abrí `http://localhost:3000/login`, inspeccioná el `<head>` y buscá un `<link rel="icon">`. Debería apuntar a `/icon.svg` (posiblemente con un query de cache-busting).
-
-Si **no** aparece: la convención cambió en esta versión. Consultá `node_modules/next/dist/docs/` para ver cómo se declaran los iconos, y si hace falta declaralo explícitamente en el `metadata` de `src/app/layout.tsx`:
-
-```ts
-export const metadata: Metadata = {
-  title: "AGServicios",
-  description: "Herramienta interna de gestión de maquinaria",
-  icons: { icon: "/icon.svg" },
-};
-```
-
-(El `title` se cambia en la Task 4; dejalo como está por ahora.) Si tomás este camino, movés `icon.svg` de `src/app/` a `public/`.
-
-- [ ] **Step 9: Revisar el logo a ojo**
-
-Abrí `http://localhost:3000/logo.svg` y `http://localhost:3000/logo-mark.svg` en el navegador. Confirmá que se ven como una marca coherente (barra negra arriba, barras verdes, flecha blanca ascendente). **Son una aproximación del original**; si quedan desalineados, ajustá las coordenadas — no hay valores sagrados acá.
-
-- [ ] **Step 10: Commit**
-
-```bash
-git add public/logo.svg public/logo-mark.svg src/app/icon.svg tests/e2e/branding.spec.ts
-git commit -m "feat(ui): add Servicios AGE logo assets, drop starter SVGs"
-```
+El archivo de Canva del usuario quedó respaldado fuera del repo, en el scratchpad de la sesión (`backup_logo_canva.svg`), y el original sigue en su carpeta de descargas. El arte fuente a 3000px se puede reconstruir desde él si hiciera falta regenerar los assets a otros tamaños.
 
 ---
 
@@ -347,10 +268,12 @@ En `src/app/dashboard/layout.tsx`, reemplazá el bloque de la marca (líneas 25�
 
 ```tsx
 <span className="brand shrink-0">
-  <img src="/logo-mark.svg" alt="Servicios AGE" className="brand-mark" />
+  <img src="/logo-mark.png" alt="" aria-hidden="true" className="brand-mark" />
   Servicios AGE
 </span>
 ```
+
+El `alt` va vacío y con `aria-hidden`: el nombre ya está en el texto que sigue, así que un `alt="Servicios AGE"` haría que un lector de pantalla lo anuncie dos veces. La imagen es decorativa acá.
 
 - [ ] **Step 5: Usar el logo en la nav del portal**
 
@@ -358,7 +281,7 @@ En `src/app/portal/layout.tsx`, reemplazá el bloque de la marca (líneas 11–1
 
 ```tsx
 <span className="brand shrink-0">
-  <img src="/logo-mark.svg" alt="Servicios AGE" className="brand-mark" />
+  <img src="/logo-mark.png" alt="" aria-hidden="true" className="brand-mark" />
   Portal
 </span>
 ```
@@ -369,10 +292,12 @@ En `src/app/login/page.tsx`, reemplazá el encabezado (líneas 13–21):
 
 ```tsx
 <div className="mb-6 flex flex-col items-center gap-3 text-center">
-  <img src="/logo.svg" alt="Servicios AGE" className="h-20 w-auto" />
+  <img src="/logo.png" alt="Servicios AGE" width={247} height={120} className="h-20 w-auto" />
   <p className="eyebrow">Acceso interno</p>
 </div>
 ```
+
+Acá el `alt` **sí** lleva el nombre: el `<h1>` de texto desaparece y esta imagen queda como única portadora de la marca. `width`/`height` son la mitad de los píxeles reales del archivo (494×240, que es 3× para pantallas retina); declararlos evita que el layout salte mientras carga.
 
 El `<h1>` con el nombre se va: el lockup ya contiene el nombre de la empresa, y repetirlo hace que un lector de pantalla lo anuncie dos veces.
 
@@ -381,7 +306,7 @@ El `<h1>` con el nombre se va: el lockup ya contiene el nombre de la empresa, y 
 En `src/proxy.ts`, línea 48:
 
 ```ts
-matcher: ['/((?!_next/static|_next/image|favicon.ico|icon.svg|logo.svg|logo-mark.svg).*)'],
+matcher: ['/((?!_next/static|_next/image|favicon.ico|icon.ico|apple-icon.png|logo.png|logo-mark.png).*)'],
 ```
 
 **Por qué:** todo lo que entra al proxy ejecuta `supabase.auth.getUser()`, que es una llamada de red. Por eso `favicon.ico` ya estaba excluido. Sin esto, cada carga de página paga esa latencia también por el logo. No es un bug de correctitud — el proxy solo redirige en `/dashboard` y `/portal`, así que los assets se servirían igual — sino latencia evitable.
@@ -548,9 +473,24 @@ Añadí esto a `AGENTS.md` **después de la línea `<!-- END:nextjs-agent-rules 
 
 La empresa se llama **Servicios AGE**. Todo texto visible al usuario usa ese nombre.
 
-El logo son tres SVG: `public/logo.svg` (lockup, login), `public/logo-mark.svg`
-(marca cuadrada, navs) y `src/app/icon.svg` (favicon). Son una recreación
-aproximada; reemplazar esos archivos actualiza toda la app sin tocar código.
+El logo son cuatro PNG generados desde el arte original a 3000px:
+
+- `public/logo.png` (494×240) — lockup completo, login. Es 3× del alto de 80px
+  al que se muestra, para pantallas retina.
+- `public/logo-mark.png` (78×96) — glifo de la E, marca de 27px en las navs.
+- `src/app/icon.ico` (16/32/48) — favicon de la pestaña, con el glifo de la E.
+- `src/app/apple-icon.png` (180×180) — icono de app, con la palabra AGE completa.
+
+**Son PNG a propósito, no SVG.** El arte de origen no es vectorial, y la app usa
+el logo en tres tamaños fijos y conocidos, así que renderizar a medida da archivos
+más chicos y más nítidos que escalar en tiempo de ejecución. No los reemplaces por
+un SVG "porque escala" sin medir: el SVG que existía pesaba 108 KB y era un PNG
+envuelto.
+
+**La pestaña usa el glifo de la E y no la palabra AGE por una razón medida:** AGE
+es 2,83:1, y a 16px se vuelve ilegible. El glifo es 0,82:1 y llena el cuadrado.
+La palabra completa sí se usa en `apple-icon.png`, donde el tamaño la sostiene.
+
 Si agregás o renombrás un asset de marca, acordate de excluirlo en el `matcher`
 de `src/proxy.ts`, o cada petición pagará una llamada de auth a Supabase.
 

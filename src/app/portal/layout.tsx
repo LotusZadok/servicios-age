@@ -9,7 +9,8 @@ export default async function PortalLayout({ children }: { children: React.React
       <header className="app-nav">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3 sm:px-6">
           <span className="brand shrink-0">
-            <span className="brand-mark">AG</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo-mark.png" alt="" aria-hidden="true" className="brand-mark" />
             Portal
           </span>
           <form action={logout} className="flex items-center gap-3">

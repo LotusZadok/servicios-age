@@ -23,8 +23,9 @@ export default async function DashboardLayout({
       <header className="app-nav">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3 sm:px-6">
           <span className="brand shrink-0">
-            <span className="brand-mark">AG</span>
-            AGServicios
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo-mark.png" alt="" aria-hidden="true" className="brand-mark" />
+            Servicios AGE
           </span>
 
           <nav className="order-3 flex w-full flex-wrap items-center gap-x-5 gap-y-2 border-t pt-3 sm:order-none sm:w-auto sm:border-0 sm:pt-0">

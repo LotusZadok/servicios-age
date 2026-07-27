@@ -20,3 +20,9 @@ test('el head declara un favicon que responde', async ({ page }) => {
   const res = await page.request.get(href!)
   expect(res.status(), `el favicon en ${href} debería servirse`).toBe(200)
 })
+
+test('el login muestra el logo de la marca', async ({ page }) => {
+  await page.goto('/login')
+  const logo = page.getByRole('img', { name: 'Servicios AGE' })
+  await expect(logo).toBeVisible()
+})

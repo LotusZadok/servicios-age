@@ -11,13 +11,9 @@ export default async function LoginPage({
     <main className="flex min-h-screen items-center justify-center p-4">
       <div className="w-full max-w-sm">
         <div className="mb-6 flex flex-col items-center gap-3 text-center">
-          <span className="brand-mark" style={{ width: '2.6rem', height: '2.6rem', fontSize: '1.1rem' }}>
-            AG
-          </span>
-          <div>
-            <h1 className="text-xl font-semibold tracking-tight">AGServicios</h1>
-            <p className="eyebrow mt-1">Acceso interno</p>
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.png" alt="Servicios AGE" width={247} height={120} className="h-20 w-auto" />
+          <p className="eyebrow">Acceso interno</p>
         </div>
 
         <form action={login} className="card space-y-5 p-8">

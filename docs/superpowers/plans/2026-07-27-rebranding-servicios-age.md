@@ -60,7 +60,7 @@ Sustituí las líneas 8–45 (desde `:root {` hasta el `}` que cierra, incluido 
 
 ```css
 :root {
-  /* Neutros — blanco y negro puros */
+  /* Neutrals — pure black and white */
   --bg: #ffffff;
   --surface: #ffffff;
   --surface-2: #f6f7f6;
@@ -70,14 +70,16 @@ Sustituí las líneas 8–45 (desde `:root {` hasta el `}` que cierra, incluido 
   --line: #e5e7e5;
   --line-strong: #d1d5d1;
 
-  /* Acento de marca — verde Servicios AGE */
+  /* Brand accent — Servicios AGE green.
+     --accent is 3.41:1 on white: OK for non-text UI (focus ring, nav underline),
+     NOT for text. Use --accent-ink (5.46:1) for anything that renders as text. */
   --accent: #16a045;
   --accent-ink: #0d7a33;
   --accent-weak: #e7f6ec;
   --danger: #a92318;
   --danger-weak: #f7e6e3;
 
-  /* Colores de estado de mantenimiento */
+  /* Maintenance status colors */
   --st-req: #9a4d0f;
   --st-req-weak: #fbeee2;
   --st-prog: #2b5d9c;
@@ -86,7 +88,7 @@ Sustituí las líneas 8–45 (desde `:root {` hasta el `}` que cierra, incluido 
   --st-proc-weak: #f5eed9;
   --st-done: var(--accent-ink);
   --st-done-weak: var(--accent-weak);
-  --st-cancel: var(--muted);
+  --st-cancel: #5b6270;
   --st-cancel-weak: #f0f1f0;
 
   --ring: 0 0 0 3px rgba(22, 160, 69, 0.28);
@@ -95,13 +97,36 @@ Sustituí las líneas 8–45 (desde `:root {` hasta el `}` que cierra, incluido 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
   --shadow: 0 6px 20px -8px rgba(0, 0, 0, 0.22);
 
-  /* Puente de tokens de Tailwind */
+  /* Tailwind token bridge */
   --background: var(--bg);
   --foreground: var(--ink);
 }
 ```
 
 **Por qué dos verdes:** `#16a045` sobre blanco da 3.41:1 de contraste — cumple el mínimo 3:1 de WCAG para componentes de interfaz (anillo de foco, subrayado de nav) pero **falla** el 4.5:1 que exige el texto. `--accent-ink` (`#0d7a33`) da 5.46:1 y cumple AA. Usá `--accent` solo para elementos no textuales y `--accent-ink` para todo texto verde. No inviertas esto.
+
+**Por qué `--st-cancel` no se aliasa a `--muted`:** `#6b7280` sobre `#f0f1f0` da 4.27:1 y no cumple AA. `#5b6270` da 5.41:1. Son dos grises parecidos a propósito: el contraste lo exige.
+
+- [ ] **Step 1b: Corregir el contraste de `::selection`**
+
+La regla `::selection` pone texto blanco sobre `var(--accent)`. Con el ámbar viejo eso daba 4.67:1 y pasaba AA; con el verde de marca da **3.42:1** y falla. El texto seleccionado es texto.
+
+```css
+::selection {
+  background: var(--accent-ink);
+  color: #fff;
+}
+```
+
+Blanco sobre `--accent-ink` da 5.46:1.
+
+Agregá también este comentario sobre el par de verdes, para que nadie los "simplifique" a uno solo más adelante:
+
+```css
+  /* Brand accent — Servicios AGE green.
+     --accent is 3.41:1 on white: OK for non-text UI (focus ring, nav underline),
+     NOT for text. Use --accent-ink (5.46:1) for anything that renders as text. */
+```
 
 - [ ] **Step 2: Quitar la retícula del `body`**
 
@@ -129,11 +154,11 @@ Las otras cuatro líneas de `.status-*` no se tocan: ya leen de variables `--st-
 
 - [ ] **Step 4: Actualizar el encabezado del archivo**
 
-Línea 4, dentro del comentario de bloque:
+Línea 4, dentro del comentario de bloque. **En inglés**: este archivo usa comentarios en inglés y strings de usuario en español. No traduzcas los comentarios que no tocás.
 
 ```css
-   Servicios AGE — sistema de diseño
-   Blanco y negro con acento verde de marca.
+   Servicios AGE — design system
+   Black and white with a green brand accent.
 ```
 
 - [ ] **Step 5: Verificar que compila y se ve bien**

@@ -1,5 +1,14 @@
 # Fase 2: Portal de clientes + historial de mantenimientos (AGServicios)
 
+Documento de diseño escrito el 23 de julio de 2026, antes de implementar.
+Describe el alcance decidido en ese momento —portal de clientes de solo
+lectura y registro de mantenimientos— y se conserva sin editar como
+registro de esa decisión; el sistema actual incluye además la solicitud
+de mantenimiento por el cliente (fase 3, ya anotada aquí como candidata),
+con los estados `solicitado` y `cancelado` y un contador de pendientes
+para el staff, y el rebranding a Servicios AGE. La otra candidata
+mencionada aquí, que el cliente edite su propia ficha, no se implementó.
+
 ## Contexto
 
 La Fase 1 (herramienta interna web para admin/empleado) está desplegada y en uso:

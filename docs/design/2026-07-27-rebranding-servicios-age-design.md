@@ -1,5 +1,14 @@
 # Rebranding: AGServicios → Servicios AGE
 
+Documento de diseño escrito el 27 de julio de 2026, antes de implementar.
+Describe el alcance decidido en ese momento —paleta, logo y nombre— y se
+conserva sin editar como registro de esa decisión; el sistema actual
+incluye además un cambio respecto a lo planeado aquí: los logos se
+implementaron como PNG generados del arte original a 3000px en vez de los
+SVG dibujados a mano que este documento especifica, con el matcher del
+proxy ajustado a esos nombres de archivo (`icon.ico`, `apple-icon.png`,
+`logo.png`, `logo-mark.png`).
+
 ## Contexto
 
 La empresa cambió oficialmente de nombre y de identidad visual. Pasa a llamarse

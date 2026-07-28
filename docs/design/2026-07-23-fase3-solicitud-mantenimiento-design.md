@@ -1,5 +1,12 @@
 # Fase 3: Solicitud de mantenimiento por el cliente (AGServicios)
 
+Documento de diseño escrito el 23 de julio de 2026, antes de implementar.
+Describe el alcance decidido en ese momento —que el cliente pueda
+solicitar un mantenimiento— y se conserva sin editar como registro de esa
+decisión; lo descrito aquí se implementó tal como está escrito, y lo
+único agregado después es el rebranding de la marca a Servicios AGE
+(27 de julio de 2026), que no toca nada de esta fase.
+
 ## Contexto
 
 La Fase 2 (desplegada) añadió el portal de clientes de **solo lectura**: un cliente

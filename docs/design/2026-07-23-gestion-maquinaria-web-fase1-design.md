@@ -1,5 +1,13 @@
 # Fase 1: Herramienta interna web para gestión de maquinaria (AGServicios)
 
+Documento de diseño escrito el 23 de julio de 2026, antes de implementar.
+Describe el alcance decidido en ese momento —CRUD interno con borrado
+definitivo y reportes en PDF o Excel— y se conserva sin editar como
+registro de esa decisión; el sistema actual incluye además el portal de
+clientes con solicitud de mantenimiento (fases 2 y 3), reemplazó el
+borrado por archivado, cambió el reporte a CSV, y renombró la marca a
+Servicios AGE.
+
 ## Contexto
 
 `AGServicios` fue un proyecto de curso de ingeniería de software (2023): app Android

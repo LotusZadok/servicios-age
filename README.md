@@ -62,30 +62,43 @@ Next.js 15 (App Router) and TypeScript on Vercel. Supabase for Postgres, Auth, a
 
 ## Running locally
 
-Requires Node 20+, Docker, and the Supabase CLI.
+Requires Node 20+ and Docker. The Supabase CLI ships as a dev dependency, so it runs through `npx` — no global install.
 
 ```bash
 npm install
-cp .env.local.example .env.local   # fill in the values printed by `supabase start`
-supabase start                     # local Postgres + Auth in Docker
-supabase db reset                  # applies migrations
+npx supabase start        # local Postgres and Auth in Docker
+```
+
+`supabase start` prints the credentials for the local instance. Copy `.env.local.example` to `.env.local` and fill it in:
+
+| Printed as         | Goes into                       |
+| ------------------ | ------------------------------- |
+| `API URL`          | `NEXT_PUBLIC_SUPABASE_URL`      |
+| `anon key`         | `NEXT_PUBLIC_SUPABASE_ANON_KEY` |
+| `service_role key` | `SUPABASE_SERVICE_ROLE_KEY`     |
+
+The four `E2E_*` variables are not printed by anything. `E2E_ADMIN_EMAIL` and `E2E_ADMIN_PASSWORD` are yours to choose, and have to match what you pass to the seed script below. `E2E_CLIENT_EMAIL` and `E2E_CLIENT_PASSWORD` are fixed by `scripts/seed-portal-test.ts` — the values are in `.env.local.example`.
+
+Then apply the schema, create the first administrator, and seed the client-side test data:
+
+```bash
+npx supabase db reset
+npx tsx scripts/seed-admin.ts <email> <password> "<full name>"
+npx tsx scripts/seed-portal-test.ts
 npm run dev
 ```
 
-Create the first administrator:
-
-```bash
-npx tsx scripts/seed-admin.ts <email> <password> "<full name>"
-```
+The portal seed is not optional if you intend to run the tests: several specs need a client account with at least one machine, and the maintenance form needs a machine to select.
 
 ## Tests
 
 ```bash
-npm run test        # Vitest — permission logic
-npm run test:e2e    # Playwright — auth, CRUD, portal isolation
+npm run test:unit
+npx playwright install     # first run only
+npm run test:e2e
 ```
 
-The end-to-end suite runs serially. Parallel workers shared one Supabase instance and interfered with each other's fixtures.
+The end-to-end suite runs with a single worker. The specs share one dev server that compiles routes on demand and one local Supabase instance; running the files in parallel exhausted both and produced timeouts indistinguishable from real failures.
 
 ## Limitations
 

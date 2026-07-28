@@ -51,3 +51,12 @@ supabase/.temp
 
 # Ad-hoc secret-key probe (contains secret when filled) - never commit
 test-secret.mjs
+
+# Pre-publish history audit - local report, not for the repo
+AUDIT.md
+
+# Configuración de herramientas locales
+CLAUDE.md
+AGENTS.md
+.claude/
+.mcp.json

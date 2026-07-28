@@ -25,7 +25,7 @@ La Fase 2 hace dos cosas de una vez:
    se implementó) y un **portal de clientes** de solo lectura, con un tercer rol
    `cliente`.
 
-Spec de Fase 1: `docs/superpowers/specs/2026-07-23-gestion-maquinaria-web-fase1-design.md`
+Spec de Fase 1: `docs/design/2026-07-23-gestion-maquinaria-web-fase1-design.md`
 
 ## Objetivo
 

@@ -19,7 +19,7 @@ La Fase 3 abre la **primera capacidad de escritura del cliente**: solicitar un
 mantenimiento para una de sus máquinas. Es la idea que quedó anotada como candidata a
 Fase 3 al cerrar la Fase 2.
 
-Spec de Fase 2: `docs/superpowers/specs/2026-07-23-fase2-portal-clientes-mantenimientos-design.md`
+Spec de Fase 2: `docs/design/2026-07-23-fase2-portal-clientes-mantenimientos-design.md`
 
 ## Objetivo
 

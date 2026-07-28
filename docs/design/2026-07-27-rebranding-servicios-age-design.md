@@ -63,7 +63,7 @@ aparte.
 |---|---|
 | `supabase/config.toml` → `project_id = "AGServicios-web"` | Nombra los contenedores Docker locales. Cambiarlo hace que el CLI lo trate como proyecto nuevo: `supabase start` levanta contenedores vacíos y huérfana el volumen local con los datos sembrados. El proyecto en la nube usa un ref distinto y no se ve afectado. |
 | `scripts/seed-portal-test.ts` → `portal@agservicios.local` | Editar el script no renombra cuentas existentes; crea una segunda casi idéntica. Además `E2E_CLIENT_EMAIL` en `.env.local` tendría que cambiar en sincronía. `.local` es un TLD reservado: nunca se envía correo ni se muestra al usuario. |
-| `docs/superpowers/specs/`, `docs/superpowers/plans/` | Registros fechados. Un spec describe qué se decidió *en esa fecha*; editarlo retroactivamente destruye su valor como registro. Es la regla de los ADR: un registro aceptado es inmutable y se supersede, no se edita. |
+| `docs/design/`, los planes de implementación | Registros fechados. Un spec describe qué se decidió *en esa fecha*; editarlo retroactivamente destruye su valor como registro. Es la regla de los ADR: un registro aceptado es inmutable y se supersede, no se edita. |
 | Nombre del repositorio e historial de git | Fuera del alcance de un cambio de código. Decisión aparte. |
 
 Para que esto no se lea como descuido, se añade una sección **"Marca"** a `AGENTS.md`

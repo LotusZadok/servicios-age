@@ -5,8 +5,8 @@ negocio de alquiler/servicio de maquinaria. Reemplaza el proyecto original
 (Android/Flask/SQL Server, en `AGServicios-main`) con una app web Next.js +
 Supabase.
 
-Diseño: `docs/superpowers/specs/2026-07-23-gestion-maquinaria-web-fase1-design.md`
-Plan de implementación: `docs/superpowers/plans/2026-07-23-fase1-herramienta-interna.md`
+Diseño: `docs/design/2026-07-23-gestion-maquinaria-web-fase1-design.md`
+Plan de implementación: 2026-07-23-fase1-herramienta-interna.md (fuera del repositorio)
 
 ## Requisitos
 

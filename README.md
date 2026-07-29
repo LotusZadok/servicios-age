@@ -13,12 +13,11 @@ Currently in production with 5 internal users and 2 client companies.
 ## Where this came from
 
 The first version was a 2023 university project for a software engineering
-course at TEC, built by three of us: a native Android app in Kotlin, a Flask
+course at TEC, built by a team of students: a native Android app in Kotlin, a Flask
 API, and SQL Server with 25 stored procedures that assembled JSON by hand. The
 Android client pointed at a hardcoded ngrok tunnel. Passwords were hashed
 manually with bcrypt in the API. The test suite was one pytest smoke test
-against `/login`. It was never used for anything. The original is at
-[`AlonsoNav/AGServicios`](https://github.com/AlonsoNav/AGServicios).
+against `/login`. It was never used for anything.
 
 I owned the database layer on that team, which means those 25 stored procedures
 were mine.

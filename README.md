@@ -12,11 +12,25 @@ Currently in production with 5 internal users and 2 client companies.
 
 ## Where this came from
 
-The first version was a 2023 university project for a software engineering course at TEC: a native Android app in Kotlin, a Flask API, and SQL Server with 25 stored procedures that assembled JSON by hand. The Android client pointed at a hardcoded ngrok tunnel. Passwords were hashed manually with bcrypt in the API. The test suite was one pytest smoke test against `/login`.
+The first version was a 2023 university project for a software engineering
+course at TEC, built by three of us: a native Android app in Kotlin, a Flask
+API, and SQL Server with 25 stored procedures that assembled JSON by hand. The
+Android client pointed at a hardcoded ngrok tunnel. Passwords were hashed
+manually with bcrypt in the API. The test suite was one pytest smoke test
+against `/login`. It was never used for anything. The original is at
+[`AlonsoNav/AGServicios`](https://github.com/AlonsoNav/AGServicios).
 
-It was never used for anything. In 2026 the business needed the thing the course project had described, so I rebuilt it — new stack, no shared code, and a hard look at which parts of the original idea were worth keeping.
+I owned the database layer on that team, which means those 25 stored procedures
+were mine.
 
-Most weren't. The stored procedures went first: application code with generated types is easier to change and possible to test. Auth moved to a managed provider instead of hand-rolled hashing. The hardcoded tunnel became environment variables. What survived was the domain model — clients, machines, brands, machine types — because that part was right.
+In 2026 the business needed what the course project had described, so I rebuilt
+it alone — new stack, no shared code, and a hard look at which parts of the
+original idea were worth keeping. Most weren't. The stored procedures went
+first, which is to say the first thing I did was delete my own work:
+application code with generated types is easier to change and possible to test.
+Auth moved to a managed provider instead of hand-rolled hashing. The hardcoded
+tunnel became environment variables. What survived was the domain model —
+clients, machines, brands, machine types — because that part was right.
 
 ## What it does
 

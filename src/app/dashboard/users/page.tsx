@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { requireAdmin } from '@/lib/auth'
 import { createClient } from '@/lib/supabase/server'
+import { TableScroll } from '@/components/table-scroll'
 import { updateUserRole } from './actions'
 
 export default async function UsersPage() {
@@ -10,7 +11,7 @@ export default async function UsersPage() {
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold">Usuarios</h1>
         <Link
           href="/dashboard/users/new"
@@ -19,7 +20,8 @@ export default async function UsersPage() {
           Nuevo usuario
         </Link>
       </div>
-      <table className="w-full border-collapse bg-white">
+      <TableScroll>
+      <table className="min-w-full border-collapse bg-white">
         <thead>
           <tr className="border-b text-left text-sm">
             <th className="p-2">Nombre</th>
@@ -47,6 +49,7 @@ export default async function UsersPage() {
           ))}
         </tbody>
       </table>
+      </TableScroll>
     </div>
   )
 }

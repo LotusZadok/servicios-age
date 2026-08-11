@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { requireUser } from '@/lib/auth'
 import { canDelete } from '@/lib/permissions'
+import { TableScroll } from '@/components/table-scroll'
 import { deleteClientRecord } from './actions'
 
 export default async function ClientsPage() {
@@ -15,7 +16,7 @@ export default async function ClientsPage() {
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold">Clientes</h1>
         <Link
           href="/dashboard/clients/new"
@@ -30,7 +31,8 @@ export default async function ClientsPage() {
           <span className="empty-hint">Crea el primero con “Nuevo cliente”.</span>
         </div>
       ) : (
-      <table className="w-full border-collapse bg-white">
+      <TableScroll>
+      <table className="min-w-full border-collapse bg-white">
         <thead>
           <tr className="border-b text-left text-sm">
             <th className="p-2">Nombre</th>
@@ -45,22 +47,27 @@ export default async function ClientsPage() {
               <td className="p-2">{client.name}</td>
               <td className="p-2">{client.email}</td>
               <td className="p-2">{client.phone}</td>
-              <td className="flex gap-3 p-2">
-                <Link href={`/dashboard/clients/${client.id}/edit`} className="link-edit">
-                  Editar
-                </Link>
-                {canDelete(profile.role) && (
-                  <form action={deleteClientRecord.bind(null, client.id)}>
-                    <button type="submit" className="link-danger">
-                      Archivar
-                    </button>
-                  </form>
-                )}
+              {/* El flex va en un div interno: sobre el propio <td>, display:flex
+                  le quita el rol de celda. */}
+              <td className="p-2">
+                <div className="flex items-center gap-3">
+                  <Link href={`/dashboard/clients/${client.id}/edit`} className="link-edit">
+                    Editar
+                  </Link>
+                  {canDelete(profile.role) && (
+                    <form action={deleteClientRecord.bind(null, client.id)}>
+                      <button type="submit" className="link-danger">
+                        Archivar
+                      </button>
+                    </form>
+                  )}
+                </div>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      </TableScroll>
       )}
     </div>
   )

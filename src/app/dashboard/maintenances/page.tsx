@@ -4,6 +4,7 @@ import { requireUser } from '@/lib/auth'
 import { canDelete } from '@/lib/permissions'
 import { sortRequestsFirst } from '@/lib/maintenances'
 import { StatusBadge } from '@/components/status-badge'
+import { TableScroll } from '@/components/table-scroll'
 import { deleteMaintenance } from './actions'
 
 export default async function MaintenancesPage() {
@@ -18,7 +19,7 @@ export default async function MaintenancesPage() {
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold">Mantenimientos</h1>
         <Link href="/dashboard/maintenances/new" className="btn btn-primary">
           Nuevo mantenimiento
@@ -32,7 +33,8 @@ export default async function MaintenancesPage() {
           </span>
         </div>
       ) : (
-      <table className="w-full border-collapse bg-white">
+      <TableScroll>
+      <table className="min-w-full border-collapse bg-white">
         <thead>
           <tr className="border-b text-left text-sm">
             <th className="p-2">Fecha</th>
@@ -55,22 +57,27 @@ export default async function MaintenancesPage() {
               <td className="p-2"><StatusBadge status={m.status} /></td>
               <td className="p-2">{m.technician?.full_name}</td>
               <td className="p-2 num"><span className="mono">{m.cost ?? ''}</span></td>
-              <td className="flex gap-3 p-2">
-                <Link href={`/dashboard/maintenances/${m.id}/edit`} className="link-edit">
-                  Editar
-                </Link>
-                {canDelete(profile.role) && (
-                  <form action={deleteMaintenance.bind(null, m.id)}>
-                    <button type="submit" className="link-danger">
-                      Eliminar
-                    </button>
-                  </form>
-                )}
+              {/* El flex va en un div interno: sobre el propio <td>, display:flex
+                  le quita el rol de celda. */}
+              <td className="p-2">
+                <div className="flex items-center gap-3">
+                  <Link href={`/dashboard/maintenances/${m.id}/edit`} className="link-edit">
+                    Editar
+                  </Link>
+                  {canDelete(profile.role) && (
+                    <form action={deleteMaintenance.bind(null, m.id)}>
+                      <button type="submit" className="link-danger">
+                        Eliminar
+                      </button>
+                    </form>
+                  )}
+                </div>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      </TableScroll>
       )}
     </div>
   )

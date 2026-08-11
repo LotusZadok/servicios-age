@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { requireClient } from '@/lib/auth'
 import { createClient } from '@/lib/supabase/server'
 import { StatusBadge } from '@/components/status-badge'
+import { TableScroll } from '@/components/table-scroll'
 import { requestMaintenance } from './actions'
 
 export default async function PortalMachinePage({
@@ -77,7 +78,8 @@ export default async function PortalMachinePage({
           </span>
         </div>
       ) : (
-        <table className="w-full border-collapse bg-white">
+        <TableScroll>
+        <table className="min-w-full border-collapse bg-white">
           <thead>
             <tr className="border-b text-left text-sm">
               <th className="p-2">Fecha</th>
@@ -97,6 +99,7 @@ export default async function PortalMachinePage({
             ))}
           </tbody>
         </table>
+        </TableScroll>
       )}
     </div>
   )

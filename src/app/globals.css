@@ -38,10 +38,28 @@
   --st-cancel-weak: #f0f1f0;
 
   --ring: 0 0 0 3px rgba(22, 160, 69, 0.28);
-  --radius: 10px;
-  --radius-sm: 7px;
+
+  /* Escala de radio. 4/8 es una progresión, no dos números cercanos:
+     a 10px y 7px la diferencia no se lee como sistema sino como descuido. */
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-pill: 999px;
+
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
   --shadow: 0 6px 20px -8px rgba(0, 0, 0, 0.22);
+
+  /* Escala tipográfica. Reemplaza los ocho tamaños sueltos que había. */
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-md: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 2rem;
+
+  /* Movimiento: una duración y una curva para toda la app. */
+  --dur: 120ms;
+  --ease: ease;
 
   /* Tailwind token bridge */
   --background: var(--bg);

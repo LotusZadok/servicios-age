@@ -59,6 +59,24 @@ cada uno pensado para un uso distinto:
 Si se agrega texto en verde en algún lugar nuevo, tiene que usar
 `#0d7a33`, no `#16a045`.
 
+### Colores de estado como texto sobre blanco
+
+Desde el refinamiento de 2026-08-12 los chips de estado —salvo
+`solicitado`— se renderizan como texto sobre `--surface`, sin píldora
+tintada. Medidos contra `#ffffff`, umbral AA para texto normal 4.5:1:
+
+| Token | Valor | Contraste | AA |
+|---|---|---|---|
+| `--st-req` | `#9a4d0f` | 6.10:1 | pasa |
+| `--st-prog` | `#2b5d9c` | 6.67:1 | pasa |
+| `--st-proc` | `#8a6300` | 5.43:1 | pasa |
+| `--st-done` | `#0d7a33` | 5.46:1 | pasa |
+| `--st-cancel` | `#5b6270` | 6.13:1 | pasa |
+
+`--st-req` conserva además el fondo `--st-req-weak` (`#fbeee2`), sobre el
+que da 5.35:1. Es el único estado que exige una acción del negocio, y ser el
+único con píldora es lo que lo hace destacar en una tabla densa.
+
 ## Por qué sobrevive el nombre anterior, "AGServicios"
 
 El proyecto se llamaba antes AGServicios y se renombró a Servicios AGE. El

@@ -1,18 +1,26 @@
 import Link from 'next/link'
+import { createClient } from '@/lib/supabase/server'
 import { requireUser } from '@/lib/auth'
-
-const sections = [
-  { href: '/dashboard/clients', label: 'Clientes', desc: 'Fichas y datos de contacto' },
-  { href: '/dashboard/locations', label: 'Sedes', desc: 'Tiendas y sucursales por cliente' },
-  { href: '/dashboard/machines', label: 'Máquinas', desc: 'Inventario con marca, tipo y sede' },
-  { href: '/dashboard/brands', label: 'Marcas', desc: 'Catálogo de fabricantes' },
-  { href: '/dashboard/machine-types', label: 'Tipos', desc: 'Categorías de maquinaria' },
-  { href: '/dashboard/reports', label: 'Reportes', desc: 'Exportar catálogo en CSV' },
-]
+import { StatusBadge } from '@/components/status-badge'
+import { orDash } from '@/lib/format'
 
 export default async function DashboardHome() {
   const { profile } = await requireUser()
   const firstName = profile.full_name.split(' ')[0]
+  const supabase = await createClient()
+
+  const { count: solicitados } = await supabase
+    .from('maintenances')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'solicitado')
+
+  const { data: recientes } = await supabase
+    .from('maintenances')
+    .select('id, date, status, description, machines(name)')
+    .order('created_at', { ascending: false })
+    .limit(8)
+
+  const pendientes = solicitados ?? 0
 
   return (
     <div>
@@ -21,26 +29,52 @@ export default async function DashboardHome() {
         Hola, {firstName}
       </h1>
       <p className="mt-2 text-[var(--muted)]">
-        Gestión de clientes, máquinas y catálogo de Servicios AGE.
+        Operación de mantenimiento de Servicios AGE: máquinas, sedes y catálogo.
       </p>
 
-      <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {sections.map((s) => (
-          <Link
-            key={s.href}
-            href={s.href}
-            className="card group flex flex-col gap-1 p-5 transition-shadow hover:shadow-[var(--shadow)]"
-          >
-            <span className="flex items-center justify-between">
-              <span className="text-base font-semibold">{s.label}</span>
-              <span className="text-[var(--muted)] transition-transform group-hover:translate-x-0.5 group-hover:text-[var(--accent)]">
-                →
-              </span>
-            </span>
-            <span className="text-sm text-[var(--muted)]">{s.desc}</span>
-          </Link>
-        ))}
-      </div>
+      <Link
+        href="/dashboard/maintenances"
+        className="card mt-8 flex items-baseline gap-3 p-5"
+      >
+        <span className="text-3xl font-semibold tabular-nums">{pendientes}</span>
+        <span className="text-[var(--muted)]">
+          {pendientes === 1
+            ? 'solicitud de servicio sin atender'
+            : 'solicitudes de servicio sin atender'}
+        </span>
+      </Link>
+
+      <h2 className="mt-10 mb-3 text-lg font-semibold">Últimos movimientos</h2>
+      {(recientes ?? []).length === 0 ? (
+        <div className="empty">
+          <span className="empty-title">Sin mantenimientos</span>
+          <span className="empty-hint">
+            Registra uno desde “Mantenimientos”, o espera a que un cliente
+            solicite servicio.
+          </span>
+        </div>
+      ) : (
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Máquina</th>
+              <th>Descripción</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            {(recientes ?? []).map((m) => (
+              <tr key={m.id}>
+                <td><span className="mono">{orDash(m.date)}</span></td>
+                <td>{orDash(m.machines?.name)}</td>
+                <td>{m.description}</td>
+                <td><StatusBadge status={m.status} /></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   )
 }

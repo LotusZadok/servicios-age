@@ -35,5 +35,5 @@ test('el dashboard usa el nombre Servicios AGE', async ({ page }) => {
 
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 })
   await expect(page).toHaveTitle(/Servicios AGE/)
-  await expect(page.getByText('catálogo de Servicios AGE')).toBeVisible()
+  await expect(page.getByText('Operación de mantenimiento de Servicios AGE')).toBeVisible()
 })

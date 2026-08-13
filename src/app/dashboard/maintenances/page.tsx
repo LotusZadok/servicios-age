@@ -5,6 +5,7 @@ import { canDelete } from '@/lib/permissions'
 import { sortRequestsFirst } from '@/lib/maintenances'
 import { StatusBadge } from '@/components/status-badge'
 import { TableScroll } from '@/components/table-scroll'
+import { formatColones, orDash } from '@/lib/format'
 import { deleteMaintenance } from './actions'
 
 export default async function MaintenancesPage() {
@@ -34,40 +35,36 @@ export default async function MaintenancesPage() {
         </div>
       ) : (
       <TableScroll>
-      <table className="min-w-full border-collapse bg-white">
+      <table>
         <thead>
-          <tr className="border-b text-left text-sm">
-            <th className="p-2">Fecha</th>
-            <th className="p-2">Máquina</th>
-            <th className="p-2">Sede</th>
-            <th className="p-2">Descripción</th>
-            <th className="p-2">Tipo</th>
-            <th className="p-2">Estado</th>
-            <th className="p-2">Técnico</th>
-            <th className="p-2 num">Horímetro</th>
-            <th className="p-2 num">Subtotal</th>
-            <th className="p-2 num">Impuesto</th>
-            <th className="p-2 num">Total</th>
-            <th className="p-2" />
+          <tr>
+            <th>Fecha</th>
+            <th>Máquina</th>
+            <th>Sede</th>
+            <th>Descripción</th>
+            <th>Tipo</th>
+            <th>Estado</th>
+            <th>Técnico</th>
+            <th className="num">Horímetro</th>
+            <th className="num">Total</th>
+            <th />
           </tr>
         </thead>
         <tbody>
           {ordered.map((m) => (
-            <tr key={m.id} className="border-b text-sm">
-              <td className="p-2"><span className="mono">{m.date ?? '—'}</span></td>
-              <td className="p-2">{m.machines?.name}</td>
-              <td className="p-2">{m.locations?.name}</td>
-              <td className="p-2">{m.description}</td>
-              <td className="p-2">{m.is_corrective ? 'Correctivo' : 'Preventivo'}</td>
-              <td className="p-2"><StatusBadge status={m.status} /></td>
-              <td className="p-2">{m.technician?.full_name}</td>
-              <td className="p-2 num"><span className="mono">{m.hour_meter ?? ''}</span></td>
-              <td className="p-2 num"><span className="mono">{m.cost_subtotal ?? ''}</span></td>
-              <td className="p-2 num"><span className="mono">{m.tax_amount ?? ''}</span></td>
-              <td className="p-2 num"><span className="mono">{m.cost_total ?? ''}</span></td>
+            <tr key={m.id}>
+              <td><span className="mono">{orDash(m.date)}</span></td>
+              <td>{orDash(m.machines?.name)}</td>
+              <td>{orDash(m.locations?.name)}</td>
+              <td>{m.description}</td>
+              <td>{m.is_corrective ? 'Correctivo' : 'Preventivo'}</td>
+              <td><StatusBadge status={m.status} /></td>
+              <td>{orDash(m.technician?.full_name)}</td>
+              <td className="num"><span className="mono">{orDash(m.hour_meter)}</span></td>
+              <td className="num"><span className="mono">{formatColones(m.cost_total)}</span></td>
               {/* El flex va en un div interno: sobre el propio <td>, display:flex
                   le quita el rol de celda. */}
-              <td className="p-2">
+              <td>
                 <div className="flex items-center gap-3">
                   <Link href={`/dashboard/maintenances/${m.id}/edit`} className="link-edit">
                     Editar

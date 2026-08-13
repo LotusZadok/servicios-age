@@ -32,22 +32,22 @@ export default async function BrandsPage() {
         </div>
       ) : (
       <TableScroll>
-      <table className="min-w-full border-collapse bg-white">
+      <table>
         <thead>
-          <tr className="border-b text-left text-sm">
-            <th className="p-2">Nombre</th>
-            <th className="p-2">Descripción</th>
-            <th className="p-2" />
+          <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th />
           </tr>
         </thead>
         <tbody>
           {(brands ?? []).map((brand) => (
-            <tr key={brand.id} className="border-b text-sm">
-              <td className="p-2">{brand.name}</td>
-              <td className="p-2">{brand.description}</td>
+            <tr key={brand.id}>
+              <td>{brand.name}</td>
+              <td>{brand.description}</td>
               {/* El flex va en un div interno: sobre el propio <td>, display:flex
                   le quita el rol de celda. */}
-              <td className="p-2">
+              <td>
                 <div className="flex items-center gap-3">
                   <Link href={`/dashboard/brands/${brand.id}/edit`} className="link-edit">
                     Editar

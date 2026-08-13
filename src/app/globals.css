@@ -21,7 +21,6 @@
      NOT for text. Use --accent-ink (5.46:1) for anything that renders as text. */
   --accent: #16a045;
   --accent-ink: #0d7a33;
-  --accent-weak: #e7f6ec;
   --danger: #a92318;
   --danger-weak: #f7e6e3;
 
@@ -29,19 +28,31 @@
   --st-req: #9a4d0f;
   --st-req-weak: #fbeee2;
   --st-prog: #2b5d9c;
-  --st-prog-weak: #e7eef7;
   --st-proc: #8a6300;
-  --st-proc-weak: #f5eed9;
   --st-done: var(--accent-ink);
-  --st-done-weak: var(--accent-weak);
   --st-cancel: #5b6270;
-  --st-cancel-weak: #f0f1f0;
 
   --ring: 0 0 0 3px rgba(22, 160, 69, 0.28);
-  --radius: 10px;
-  --radius-sm: 7px;
+
+  /* Escala de radio. 4/8 es una progresión, no dos números cercanos:
+     a 10px y 7px la diferencia no se lee como sistema sino como descuido. */
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-pill: 999px;
+
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
   --shadow: 0 6px 20px -8px rgba(0, 0, 0, 0.22);
+
+  /* Escala tipográfica. Reemplaza los ocho tamaños sueltos que había con los
+     cuatro que tienen consumidor real; no se agregan tamaños especulativos. */
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-md: 0.875rem;
+  --text-base: 1rem;
+
+  /* Movimiento: una duración y una curva para toda la app. */
+  --dur: 120ms;
+  --ease: ease;
 
   /* Tailwind token bridge */
   --background: var(--bg);
@@ -95,7 +106,7 @@ textarea {
   background: var(--surface);
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-sm);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
 }
 
 @media (width >= 40rem) {
@@ -127,31 +138,24 @@ label {
   font-weight: 500;
 }
 
-/* ---------- Tables (auto-upgrades every list page) ---------- */
+/* ---------- Tables (auto-upgrades every list page) ----------
+   Un solo sistema de separación: regla hairline por fila. Sin zebra, sin
+   sombra, sin radio. Una tabla operativa densa no es una tarjeta, y zebra +
+   hover + fondo de thead resuelven todos el mismo problema compitiendo
+   entre sí. */
 table {
+  width: 100%;
   background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  border-collapse: separate;
-  border-spacing: 0;
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-}
-
-thead tr {
-  background: var(--surface-2);
+  border-collapse: collapse;
 }
 
 thead th {
-  font-family: var(--font-plex-mono), ui-monospace, monospace;
-  font-size: 0.68rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-align: left;
   color: var(--muted);
-  border-bottom: 1px solid var(--line-strong) !important;
-  padding-top: 0.7rem;
-  padding-bottom: 0.7rem;
+  border-bottom: 1px solid var(--line-strong);
+  white-space: nowrap;
 }
 
 tbody td {
@@ -160,12 +164,23 @@ tbody td {
   vertical-align: middle;
 }
 
-tbody tr:last-child td {
-  border-bottom: none;
+th,
+td {
+  padding: 0.625rem 0.75rem;
+}
+
+th:first-child,
+td:first-child {
+  padding-left: 0;
+}
+
+th:last-child,
+td:last-child {
+  padding-right: 0;
 }
 
 tbody tr {
-  transition: background-color 0.12s ease;
+  transition: background-color var(--dur) var(--ease);
 }
 
 tbody tr:hover {
@@ -175,7 +190,7 @@ tbody tr:hover {
 /* ---------- Component classes ---------- */
 .eyebrow {
   font-family: var(--font-plex-mono), ui-monospace, monospace;
-  font-size: 0.68rem;
+  font-size: var(--text-xs);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.14em;
@@ -194,20 +209,14 @@ tbody tr:hover {
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  font-family: var(--font-plex-mono), ui-monospace, monospace;
-  font-size: 0.74rem;
+  font-size: var(--text-md);
   font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  padding: 0.6rem 1rem;
+  padding: 0.55rem 0.9rem;
   border-radius: var(--radius-sm);
   border: 1px solid transparent;
   cursor: pointer;
-  transition: transform 0.08s ease, background-color 0.15s ease,
-    box-shadow 0.15s ease, border-color 0.15s ease;
-}
-.btn:active {
-  transform: translateY(1px);
+  transition: background-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease),
+    border-color var(--dur) var(--ease);
 }
 .btn-primary {
   background: var(--ink);
@@ -265,10 +274,10 @@ tbody tr:hover {
 
 .nav-link {
   position: relative;
-  font-size: 0.85rem;
+  font-size: var(--text-md);
   color: var(--muted);
   padding: 0.35rem 0.1rem;
-  transition: color 0.15s ease;
+  transition: color var(--dur) var(--ease);
   white-space: nowrap;
 }
 .nav-link:hover {
@@ -292,7 +301,7 @@ tbody tr:hover {
 .link-edit {
   color: var(--accent-ink);
   font-weight: 500;
-  font-size: 0.85rem;
+  font-size: var(--text-md);
 }
 .link-edit:hover {
   text-decoration: underline;
@@ -302,7 +311,7 @@ tbody tr:hover {
 .link-danger {
   color: var(--danger);
   font-weight: 500;
-  font-size: 0.85rem;
+  font-size: var(--text-md);
   cursor: pointer;
 }
 .link-danger:hover {
@@ -313,36 +322,39 @@ tbody tr:hover {
 /* Serial numbers / codes read as machine data */
 .mono {
   font-family: var(--font-plex-mono), ui-monospace, monospace;
-  font-size: 0.82rem;
+  font-size: var(--text-sm);
   color: var(--ink-soft);
+  /* Un dato de máquina no se parte: una fecha cortada en "2026-" / "07-23" o
+     una serie partida al medio dejan de leerse como un valor único. En la
+     tabla de mantenimientos, con diez columnas, pasaba con las fechas. */
+  white-space: nowrap;
 }
 
-/* ---------- Status chips ---------- */
+/* ---------- Status chips ----------
+   El texto es el portador de significado; el color solo lo refuerza, así que
+   quitar el punto y la píldora no pierde accesibilidad. Los cinco colores
+   están medidos sobre blanco y pasan AA como texto (ver docs/marca.md).
+   `solicitado` conserva el fondo a propósito: es el único estado que pide
+   una acción, y ser el único con fondo es lo que lo hace destacar. */
 .status {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  font-family: var(--font-plex-mono), ui-monospace, monospace;
-  font-size: 0.66rem;
+  font-size: var(--text-sm);
   font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 0.16rem 0.5rem;
-  border-radius: 999px;
   white-space: nowrap;
 }
-.status::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
+
+.status-solicitado {
+  color: var(--st-req);
+  background: var(--st-req-weak);
+  border-radius: var(--radius-pill);
+  padding: 0.15rem 0.55rem;
 }
-.status-solicitado { color: var(--st-req); background: var(--st-req-weak); }
-.status-programado { color: var(--st-prog); background: var(--st-prog-weak); }
-.status-en_proceso { color: var(--st-proc); background: var(--st-proc-weak); }
-.status-completado { color: var(--st-done); background: var(--st-done-weak); }
-.status-cancelado  { color: var(--st-cancel); background: var(--st-cancel-weak); }
+
+.status-programado { color: var(--st-prog); }
+.status-en_proceso { color: var(--st-proc); }
+.status-completado { color: var(--st-done); }
+.status-cancelado  { color: var(--st-cancel); }
 
 /* ---------- Empty states ---------- */
 .empty {
@@ -357,12 +369,10 @@ tbody tr:hover {
   background: var(--surface-2);
   color: var(--muted);
 }
-.empty .empty-title { color: var(--ink-soft); font-weight: 500; font-size: 0.95rem; }
-.empty .empty-hint { font-size: 0.85rem; }
+.empty .empty-title { color: var(--ink-soft); font-weight: 500; font-size: var(--text-base); }
+.empty .empty-hint { font-size: var(--text-md); }
 
-/* ---------- Table density: zebra + numeric alignment ---------- */
-tbody tr:nth-child(even) { background: color-mix(in srgb, var(--surface-2) 55%, transparent); }
-tbody tr:hover { background: var(--surface-2); }
+/* ---------- Table density: numeric alignment ---------- */
 td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 
 /* ---------- Responsive ----------

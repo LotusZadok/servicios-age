@@ -39,6 +39,10 @@ test('staff registra un mantenimiento y aparece en la lista', async ({ page }) =
   await expect(fila).toBeVisible()
   await expect(fila).toContainText('Sede Central E2E')
   await expect(fila).toContainText('1350')
-  // cost_total es una columna generada: 200000 + 0.
-  await expect(fila).toContainText('200000')
+  // cost_total es una columna generada: 200000 + 0. En la tabla se muestra
+  // formateado con Intl (es-CR), cuyo separador de miles es un espacio duro:
+  // el \s de la expresión regular lo cubre sin meter un carácter invisible
+  // en el archivo. El formulario, en cambio, sigue mostrando el total crudo
+  // — eso lo verifica la aserción de más arriba.
+  await expect(fila).toContainText(/₡200\s000/)
 })

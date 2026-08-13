@@ -5,6 +5,7 @@ import { canDelete } from '@/lib/permissions'
 import { sortRequestsFirst } from '@/lib/maintenances'
 import { StatusBadge } from '@/components/status-badge'
 import { TableScroll } from '@/components/table-scroll'
+import { formatColones, orDash } from '@/lib/format'
 import { deleteMaintenance } from './actions'
 
 export default async function MaintenancesPage() {
@@ -45,8 +46,6 @@ export default async function MaintenancesPage() {
             <th>Estado</th>
             <th>Técnico</th>
             <th className="num">Horímetro</th>
-            <th className="num">Subtotal</th>
-            <th className="num">Impuesto</th>
             <th className="num">Total</th>
             <th />
           </tr>
@@ -54,17 +53,15 @@ export default async function MaintenancesPage() {
         <tbody>
           {ordered.map((m) => (
             <tr key={m.id}>
-              <td><span className="mono">{m.date ?? '—'}</span></td>
-              <td>{m.machines?.name}</td>
-              <td>{m.locations?.name}</td>
+              <td><span className="mono">{orDash(m.date)}</span></td>
+              <td>{orDash(m.machines?.name)}</td>
+              <td>{orDash(m.locations?.name)}</td>
               <td>{m.description}</td>
               <td>{m.is_corrective ? 'Correctivo' : 'Preventivo'}</td>
               <td><StatusBadge status={m.status} /></td>
-              <td>{m.technician?.full_name}</td>
-              <td className="num"><span className="mono">{m.hour_meter ?? ''}</span></td>
-              <td className="num"><span className="mono">{m.cost_subtotal ?? ''}</span></td>
-              <td className="num"><span className="mono">{m.tax_amount ?? ''}</span></td>
-              <td className="num"><span className="mono">{m.cost_total ?? ''}</span></td>
+              <td>{orDash(m.technician?.full_name)}</td>
+              <td className="num"><span className="mono">{orDash(m.hour_meter)}</span></td>
+              <td className="num"><span className="mono">{formatColones(m.cost_total)}</span></td>
               {/* El flex va en un div interno: sobre el propio <td>, display:flex
                   le quita el rol de celda. */}
               <td>

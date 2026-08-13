@@ -8,7 +8,7 @@ That last one is what actually paid for this project. The business wanted to sho
 
 This is what replaced the workbook: an internal panel for staff, and a separate portal where each client sees their own equipment and service history and can request service.
 
-Currently in production with 5 internal users and 2 client companies.
+Built and deployed, but not yet in real use: no business data has been loaded and no accounts other than the developer's exist. The screenshots below are seeded development data. What remains before it runs for real is not engineering work.
 
 ## Where this came from
 

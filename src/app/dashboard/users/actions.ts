@@ -75,3 +75,38 @@ export async function updateUserRole(id: string, formData: FormData) {
 
   revalidatePath('/dashboard/users')
 }
+
+export async function deleteUser(id: string) {
+  const { user } = await requireAdmin()
+
+  if (id === user.id) {
+    redirect(
+      `/dashboard/users?error=${encodeURIComponent('No puedes eliminar tu propia cuenta.')}`
+    )
+  }
+
+  const admin = createAdminClient()
+
+  const { data: target } = await admin.from('profiles').select('role').eq('id', id).single()
+
+  // Same lockout guard as updateUserRole: don't let the last admin be removed.
+  if (target?.role === 'admin') {
+    const { data: admins } = await admin.from('profiles').select('id').eq('role', 'admin')
+
+    if (admins != null && admins.length <= 1) {
+      redirect(
+        `/dashboard/users?error=${encodeURIComponent('No puedes eliminar al último administrador.')}`
+      )
+    }
+  }
+
+  // profiles.id references auth.users(id) on delete cascade, so this also
+  // removes the profile row.
+  const { error } = await admin.auth.admin.deleteUser(id)
+
+  if (error) {
+    redirect(`/dashboard/users?error=${encodeURIComponent(error.message)}`)
+  }
+
+  revalidatePath('/dashboard/users')
+}

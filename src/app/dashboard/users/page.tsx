@@ -3,9 +3,15 @@ import { requireAdmin } from '@/lib/auth'
 import { createClient } from '@/lib/supabase/server'
 import { TableScroll } from '@/components/table-scroll'
 import { updateUserRole } from './actions'
+import { DeleteUserButton } from './delete-user-button'
 
-export default async function UsersPage() {
-  await requireAdmin()
+export default async function UsersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>
+}) {
+  const { user } = await requireAdmin()
+  const { error } = await searchParams
   const supabase = await createClient()
   const { data: profiles } = await supabase.from('profiles').select('*').order('full_name')
 
@@ -20,6 +26,7 @@ export default async function UsersPage() {
           Nuevo usuario
         </Link>
       </div>
+      {error && <p className="mb-4 text-sm link-danger">{error}</p>}
       <TableScroll>
       <table className="min-w-full border-collapse bg-white">
         <thead>
@@ -35,15 +42,18 @@ export default async function UsersPage() {
               <td className="p-2">{p.full_name}</td>
               <td className="p-2">{p.role}</td>
               <td className="p-2">
-                <form action={updateUserRole.bind(null, p.id)} className="flex items-center gap-2">
-                  <select name="role" defaultValue={p.role} className="rounded border px-2 py-1">
-                    <option value="admin">admin</option>
-                    <option value="empleado">empleado</option>
-                  </select>
-                  <button type="submit" className="link-edit">
-                    Guardar
-                  </button>
-                </form>
+                <div className="flex items-center gap-3">
+                  <form action={updateUserRole.bind(null, p.id)} className="flex items-center gap-2">
+                    <select name="role" defaultValue={p.role} className="rounded border px-2 py-1">
+                      <option value="admin">admin</option>
+                      <option value="empleado">empleado</option>
+                    </select>
+                    <button type="submit" className="link-edit">
+                      Guardar
+                    </button>
+                  </form>
+                  {p.id !== user.id && <DeleteUserButton id={p.id} fullName={p.full_name} />}
+                </div>
               </td>
             </tr>
           ))}

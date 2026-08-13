@@ -29,13 +29,9 @@
   --st-req: #9a4d0f;
   --st-req-weak: #fbeee2;
   --st-prog: #2b5d9c;
-  --st-prog-weak: #e7eef7;
   --st-proc: #8a6300;
-  --st-proc-weak: #f5eed9;
   --st-done: var(--accent-ink);
-  --st-done-weak: var(--accent-weak);
   --st-cancel: #5b6270;
-  --st-cancel-weak: #f0f1f0;
 
   --ring: 0 0 0 3px rgba(22, 160, 69, 0.28);
 
@@ -336,27 +332,31 @@ tbody tr:hover {
   color: var(--ink-soft);
 }
 
-/* ---------- Status chips ---------- */
+/* ---------- Status chips ----------
+   El texto es el portador de significado; el color solo lo refuerza, así que
+   quitar el punto y la píldora no pierde accesibilidad. Los cinco colores
+   están medidos sobre blanco y pasan AA como texto (ver docs/marca.md).
+   `solicitado` conserva el fondo a propósito: es el único estado que pide
+   una acción, y ser el único con fondo es lo que lo hace destacar. */
 .status {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
   font-size: var(--text-sm);
   font-weight: 500;
   white-space: nowrap;
 }
-.status::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
+
+.status-solicitado {
+  color: var(--st-req);
+  background: var(--st-req-weak);
+  border-radius: var(--radius-pill);
+  padding: 0.15rem 0.55rem;
 }
-.status-solicitado { color: var(--st-req); background: var(--st-req-weak); }
-.status-programado { color: var(--st-prog); background: var(--st-prog-weak); }
-.status-en_proceso { color: var(--st-proc); background: var(--st-proc-weak); }
-.status-completado { color: var(--st-done); background: var(--st-done-weak); }
-.status-cancelado  { color: var(--st-cancel); background: var(--st-cancel-weak); }
+
+.status-programado { color: var(--st-prog); }
+.status-en_proceso { color: var(--st-proc); }
+.status-completado { color: var(--st-done); }
+.status-cancelado  { color: var(--st-cancel); }
 
 /* ---------- Empty states ---------- */
 .empty {

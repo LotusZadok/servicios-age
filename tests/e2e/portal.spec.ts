@@ -10,6 +10,9 @@ test('un cliente entra a su portal y no puede ver el dashboard', async ({ page }
   await expect(page).toHaveURL(/\/portal/, { timeout: 15000 })
   await expect(page.getByText('Mis máquinas')).toBeVisible()
 
+  // El cliente ve en qué sede está cada máquina.
+  await expect(page.getByText('Sede: Sede Central E2E')).toBeVisible()
+
   // A client cannot reach the internal dashboard; it redirects back to /portal.
   await page.goto('/dashboard/clients')
   await expect(page).toHaveURL(/\/portal/)

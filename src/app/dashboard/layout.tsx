@@ -35,6 +35,7 @@ export default async function DashboardLayout({
               md y +  → marca · links · salir */}
           <NavMenu>
             <NavLink href="/dashboard/clients">Clientes</NavLink>
+            <NavLink href="/dashboard/locations">Sedes</NavLink>
             <NavLink href="/dashboard/machines">Máquinas</NavLink>
             <NavLink href="/dashboard/maintenances">{maintenancesLabel}</NavLink>
             <NavLink href="/dashboard/brands">Marcas</NavLink>

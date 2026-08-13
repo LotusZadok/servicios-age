@@ -12,7 +12,7 @@ export default async function MaintenancesPage() {
   const supabase = await createClient()
   const { data: maintenances } = await supabase
     .from('maintenances')
-    .select('*, machines(name), technician:profiles!technician_id(full_name)')
+    .select('*, machines(name), locations(name), technician:profiles!technician_id(full_name)')
     .order('created_at', { ascending: false })
 
   const ordered = sortRequestsFirst(maintenances ?? [])
@@ -39,11 +39,15 @@ export default async function MaintenancesPage() {
           <tr className="border-b text-left text-sm">
             <th className="p-2">Fecha</th>
             <th className="p-2">Máquina</th>
+            <th className="p-2">Sede</th>
             <th className="p-2">Descripción</th>
             <th className="p-2">Tipo</th>
             <th className="p-2">Estado</th>
             <th className="p-2">Técnico</th>
-            <th className="p-2 num">Costo</th>
+            <th className="p-2 num">Horímetro</th>
+            <th className="p-2 num">Subtotal</th>
+            <th className="p-2 num">Impuesto</th>
+            <th className="p-2 num">Total</th>
             <th className="p-2" />
           </tr>
         </thead>
@@ -52,11 +56,15 @@ export default async function MaintenancesPage() {
             <tr key={m.id} className="border-b text-sm">
               <td className="p-2"><span className="mono">{m.date ?? '—'}</span></td>
               <td className="p-2">{m.machines?.name}</td>
+              <td className="p-2">{m.locations?.name}</td>
               <td className="p-2">{m.description}</td>
               <td className="p-2">{m.is_corrective ? 'Correctivo' : 'Preventivo'}</td>
               <td className="p-2"><StatusBadge status={m.status} /></td>
               <td className="p-2">{m.technician?.full_name}</td>
-              <td className="p-2 num"><span className="mono">{m.cost ?? ''}</span></td>
+              <td className="p-2 num"><span className="mono">{m.hour_meter ?? ''}</span></td>
+              <td className="p-2 num"><span className="mono">{m.cost_subtotal ?? ''}</span></td>
+              <td className="p-2 num"><span className="mono">{m.tax_amount ?? ''}</span></td>
+              <td className="p-2 num"><span className="mono">{m.cost_total ?? ''}</span></td>
               {/* El flex va en un div interno: sobre el propio <td>, display:flex
                   le quita el rol de celda. */}
               <td className="p-2">

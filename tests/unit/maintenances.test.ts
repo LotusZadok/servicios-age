@@ -1,5 +1,26 @@
 import { describe, expect, it } from 'vitest'
-import { isRequest, sortRequestsFirst } from '@/lib/maintenances'
+import { TAX_RATE, defaultTaxAmount, isRequest, sortRequestsFirst } from '@/lib/maintenances'
+
+describe('defaultTaxAmount', () => {
+  it('propone el 13 % del subtotal', () => {
+    expect(TAX_RATE).toBe(0.13)
+    expect(defaultTaxAmount(50000)).toBe(6500)
+  })
+
+  it('redondea a dos decimales, la escala de numeric(12,2)', () => {
+    // 1234.56 * 0.13 = 160.4928 en aritmética exacta.
+    expect(defaultTaxAmount(1234.56)).toBe(160.49)
+  })
+
+  it('sin subtotal no hay impuesto que proponer', () => {
+    expect(defaultTaxAmount(null)).toBeNull()
+    expect(defaultTaxAmount(Number.NaN)).toBeNull()
+  })
+
+  it('un subtotal en cero da impuesto cero, no null', () => {
+    expect(defaultTaxAmount(0)).toBe(0)
+  })
+})
 
 describe('isRequest', () => {
   it('true for solicitado', () => expect(isRequest('solicitado')).toBe(true))

@@ -10,7 +10,7 @@ export default async function MachinesPage() {
   const supabase = await createClient()
   const { data: machines } = await supabase
     .from('machines')
-    .select('*, brands(name), machine_types(name), clients(name)')
+    .select('*, brands(name), machine_types(name), clients(name), locations(name)')
     .eq('active', true)
     .order('name')
 
@@ -37,10 +37,12 @@ export default async function MachinesPage() {
           <tr className="border-b text-left text-sm">
             <th className="p-2">Nombre</th>
             <th className="p-2">Serie</th>
+            <th className="p-2">N.º activo</th>
             <th className="p-2">Modelo</th>
             <th className="p-2">Marca</th>
             <th className="p-2">Tipo</th>
             <th className="p-2">Cliente</th>
+            <th className="p-2">Sede</th>
             <th className="p-2" />
           </tr>
         </thead>
@@ -49,10 +51,12 @@ export default async function MachinesPage() {
             <tr key={machine.id} className="border-b text-sm">
               <td className="p-2">{machine.name}</td>
               <td className="p-2"><span className="mono">{machine.serial_number}</span></td>
+              <td className="p-2"><span className="mono">{machine.asset_number}</span></td>
               <td className="p-2"><span className="mono">{machine.model}</span></td>
               <td className="p-2">{machine.brands?.name}</td>
               <td className="p-2">{machine.machine_types?.name}</td>
               <td className="p-2">{machine.clients?.name}</td>
+              <td className="p-2">{machine.locations?.name}</td>
               {/* El flex va en un div interno: sobre el propio <td>, display:flex
                   le quita el rol de celda. */}
               <td className="p-2">

@@ -28,11 +28,16 @@ export default async function EditMaintenancePage({
       <MaintenanceFields
         defaults={{
           machine_id: m.machine_id,
+          location_id: m.location_id,
           technician_id: m.technician_id,
           date: m.date,
           description: m.description,
           is_corrective: m.is_corrective,
-          cost: m.cost,
+          cost_subtotal: m.cost_subtotal,
+          tax_amount: m.tax_amount,
+          hour_meter: m.hour_meter,
+          report_ref: m.report_ref,
+          quote_ref: m.quote_ref,
           status: m.status,
         }}
       />

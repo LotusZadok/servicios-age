@@ -40,6 +40,26 @@ async function main() {
     clientId = client.id
   }
 
+  // Two sedes for that client: la máquina vive en la primera, y la segunda
+  // existe para que el E2E pueda comprobar que el select filtra por cliente.
+  const { data: location } = await admin
+    .from('locations')
+    .upsert(
+      { client_id: clientId, name: 'Sede Central E2E', address: 'Avenida E2E 1' },
+      { onConflict: 'client_id,name' }
+    )
+    .select('id')
+    .single()
+
+  await admin
+    .from('locations')
+    .upsert(
+      { client_id: clientId, name: 'Sede Norte E2E', address: 'Avenida E2E 2' },
+      { onConflict: 'client_id,name' }
+    )
+
+  if (!location) throw new Error('location seed failed')
+
   // A machine owned by that client.
   const { data: existingMachine } = await admin
     .from('machines')
@@ -51,7 +71,7 @@ async function main() {
   if (!machineId) {
     const { data: machine, error } = await admin
       .from('machines')
-      .insert({ name: 'Excavadora E2E', serial_number: 'E2E-0001', model: 'X-100', brand_id: brand.id, type_id: type.id, client_id: clientId })
+      .insert({ name: 'Excavadora E2E', serial_number: 'E2E-0001', asset_number: 'ACT-E2E-1', model: 'X-100', brand_id: brand.id, type_id: type.id, client_id: clientId, location_id: location.id })
       .select('id')
       .single()
     if (error || !machine) throw new Error('machine seed failed: ' + error?.message)
@@ -67,10 +87,16 @@ async function main() {
   if (!existingMaint) {
     await admin.from('maintenances').insert({
       machine_id: machineId,
+      location_id: location.id,
       date: '2026-07-01',
       description: 'Mantenimiento inicial E2E',
       is_corrective: false,
       status: 'completado',
+      hour_meter: 1200,
+      cost_subtotal: 50000,
+      tax_amount: 6500,
+      report_ref: 'BOL-E2E-1',
+      quote_ref: 'PRO-E2E-1',
     })
   }
 

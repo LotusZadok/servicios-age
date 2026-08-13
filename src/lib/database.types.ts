@@ -88,6 +88,41 @@ export type Database = {
         }
         Relationships: []
       }
+      locations: {
+        Row: {
+          active: boolean
+          address: string | null
+          client_id: string
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          active?: boolean
+          address?: string | null
+          client_id: string
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          active?: boolean
+          address?: string | null
+          client_id?: string
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "locations_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       machine_types: {
         Row: {
           active: boolean
@@ -115,10 +150,12 @@ export type Database = {
       machines: {
         Row: {
           active: boolean
+          asset_number: string | null
           brand_id: string
           client_id: string | null
           created_at: string
           id: string
+          location_id: string | null
           model: string | null
           name: string
           serial_number: string | null
@@ -126,10 +163,12 @@ export type Database = {
         }
         Insert: {
           active?: boolean
+          asset_number?: string | null
           brand_id: string
           client_id?: string | null
           created_at?: string
           id?: string
+          location_id?: string | null
           model?: string | null
           name: string
           serial_number?: string | null
@@ -137,10 +176,12 @@ export type Database = {
         }
         Update: {
           active?: boolean
+          asset_number?: string | null
           brand_id?: string
           client_id?: string | null
           created_at?: string
           id?: string
+          location_id?: string | null
           model?: string | null
           name?: string
           serial_number?: string | null
@@ -162,6 +203,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "machines_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "machines_type_id_fkey"
             columns: ["type_id"]
             isOneToOne: false
@@ -172,39 +220,64 @@ export type Database = {
       }
       maintenances: {
         Row: {
-          cost: number | null
+          cost_subtotal: number | null
+          cost_total: number | null
           created_at: string
           date: string | null
           description: string
+          hour_meter: number | null
           id: string
           is_corrective: boolean
+          location_id: string | null
           machine_id: string
+          quote_ref: string | null
+          report_ref: string | null
           status: string
+          tax_amount: number | null
           technician_id: string | null
         }
         Insert: {
-          cost?: number | null
+          cost_subtotal?: number | null
+          cost_total?: number | null
           created_at?: string
           date?: string | null
           description: string
+          hour_meter?: number | null
           id?: string
           is_corrective?: boolean
+          location_id?: string | null
           machine_id: string
+          quote_ref?: string | null
+          report_ref?: string | null
           status?: string
+          tax_amount?: number | null
           technician_id?: string | null
         }
         Update: {
-          cost?: number | null
+          cost_subtotal?: number | null
+          cost_total?: number | null
           created_at?: string
           date?: string | null
           description?: string
+          hour_meter?: number | null
           id?: string
           is_corrective?: boolean
+          location_id?: string | null
           machine_id?: string
+          quote_ref?: string | null
+          report_ref?: string | null
           status?: string
+          tax_amount?: number | null
           technician_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "maintenances_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "maintenances_machine_id_fkey"
             columns: ["machine_id"]

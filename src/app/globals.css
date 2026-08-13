@@ -324,6 +324,10 @@ tbody tr:hover {
   font-family: var(--font-plex-mono), ui-monospace, monospace;
   font-size: var(--text-sm);
   color: var(--ink-soft);
+  /* Un dato de máquina no se parte: una fecha cortada en "2026-" / "07-23" o
+     una serie partida al medio dejan de leerse como un valor único. En la
+     tabla de mantenimientos, con diez columnas, pasaba con las fechas. */
+  white-space: nowrap;
 }
 
 /* ---------- Status chips ----------

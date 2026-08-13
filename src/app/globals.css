@@ -145,31 +145,24 @@ label {
   font-weight: 500;
 }
 
-/* ---------- Tables (auto-upgrades every list page) ---------- */
+/* ---------- Tables (auto-upgrades every list page) ----------
+   Un solo sistema de separación: regla hairline por fila. Sin zebra, sin
+   sombra, sin radio. Una tabla operativa densa no es una tarjeta, y zebra +
+   hover + fondo de thead resuelven todos el mismo problema compitiendo
+   entre sí. */
 table {
+  width: 100%;
   background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  border-collapse: separate;
-  border-spacing: 0;
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-}
-
-thead tr {
-  background: var(--surface-2);
+  border-collapse: collapse;
 }
 
 thead th {
-  font-family: var(--font-plex-mono), ui-monospace, monospace;
-  font-size: 0.68rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-align: left;
   color: var(--muted);
-  border-bottom: 1px solid var(--line-strong) !important;
-  padding-top: 0.7rem;
-  padding-bottom: 0.7rem;
+  border-bottom: 1px solid var(--line-strong);
+  white-space: nowrap;
 }
 
 tbody td {
@@ -178,12 +171,23 @@ tbody td {
   vertical-align: middle;
 }
 
-tbody tr:last-child td {
-  border-bottom: none;
+th,
+td {
+  padding: 0.625rem 0.75rem;
+}
+
+th:first-child,
+td:first-child {
+  padding-left: 0;
+}
+
+th:last-child,
+td:last-child {
+  padding-right: 0;
 }
 
 tbody tr {
-  transition: background-color 0.12s ease;
+  transition: background-color var(--dur) var(--ease);
 }
 
 tbody tr:hover {
@@ -370,9 +374,7 @@ tbody tr:hover {
 .empty .empty-title { color: var(--ink-soft); font-weight: 500; font-size: var(--text-base); }
 .empty .empty-hint { font-size: var(--text-md); }
 
-/* ---------- Table density: zebra + numeric alignment ---------- */
-tbody tr:nth-child(even) { background: color-mix(in srgb, var(--surface-2) 55%, transparent); }
-tbody tr:hover { background: var(--surface-2); }
+/* ---------- Table density: numeric alignment ---------- */
 td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 
 /* ---------- Responsive ----------

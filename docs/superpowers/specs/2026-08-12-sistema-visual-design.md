@@ -175,10 +175,25 @@ Tres aserciones son frágiles frente a este trabajo:
    `getByRole('cell', { name: 'solicitado' })`. Sobrevive: el chip sigue
    renderizando el texto `Solicitado` y `getByRole` normaliza mayúsculas.
 
+4. **`tests/e2e/maintenances.spec.ts:43`** — `toContainText('200000')`.
+   **Esta se me pasó al escribir el spec.** El párrafo que seguía afirmaba
+   que ninguna aserción consultaba las columnas de dinero, y era falso: esta
+   verifica el total *de la fila de la tabla*, que es exactamente el valor
+   que la sección 5 pasa a formatear. Apareció recién al correr la suite
+   completa, con el trabajo ya hecho.
+
+   Corrección aplicada: `toContainText(/₡200\s000/)`. La expresión regular
+   evita meter un espacio duro invisible en el archivo y sigue afirmando lo
+   que importa — que el importe es 200000 y que se muestra formateado.
+
+   Las tres de arriba salieron de un `grep` sobre `tests/e2e/`; esta cuarta
+   no, porque buscaba `Total:` y cadenas de moneda, no un número pelado
+   dentro de una aserción de fila. La lección para la próxima: buscar por el
+   *dato* que cambia de forma, no por la etiqueta que lo acompaña.
+
 Sobreviven sin cambios todos los `getByLabel` de formularios, los
 `getByRole('button' | 'link')` y los `getByRole('row')`, porque este trabajo
-no cambia etiquetas, textos de acción ni estructura de filas — salvo las dos
-columnas de dinero que se retiran, que ninguna aserción consulta.
+no cambia etiquetas, textos de acción ni estructura de filas.
 
 ## Verificación
 

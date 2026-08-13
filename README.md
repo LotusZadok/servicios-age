@@ -61,6 +61,28 @@ The fix was to stop treating the route as the boundary. Authorization moved into
 
 The system has three layers of access control because the first two were not enough on their own. That is the reason, not an architecture preference.
 
+**A machine's location is current; a maintenance record's location is a snapshot.**
+
+Clients are chains with several stores, and they lend machines between them. `locations` holds a client's stores — the name is unique per client, so two clients can each have a "Centro". Both `machines` and `maintenances` carry a `location_id`, and they mean different things on purpose.
+
+On `machines` it is the current location, and it is meant to be edited: move the machine, change the field. On `maintenances` it is where the work was actually performed, captured at the time and never resynced. The form proposes it from the machine, and after that nothing touches it. If it were a live reference, lending a machine would silently rewrite its whole service history — and showing that history to a client is the reason this project exists.
+
+**Money is stored as amounts, not rates.**
+
+`maintenances` breaks cost into `cost_subtotal` and `tax_amount`, with `cost_total` as a generated stored column. Storing the tax amount rather than the rate means a change in the national VAT does not retroactively alter records that were already billed; each one keeps matching the receipt issued that day.
+
+`tax_amount` distinguishes NULL from zero, and the distinction is load-bearing. NULL means nobody has entered the tax yet; `0` means the service is exempt. The generated total follows the same rule: NULL only when subtotal and tax are both NULL (an unbilled job), otherwise the sum with missing parts treated as zero. This replaced a single `cost` column, which was dropped outright — the database was still empty, so paying for a data migration later would have bought nothing.
+
+The rest of what a job records: `hour_meter` (the reading taken on the visit), `report_ref` (service ticket) and `quote_ref` (proforma).
+
+**Serial numbers are unique through a partial index, and inventory tags are not unique at all.**
+
+`machines.serial_number` is the manufacturer's, optional, and unique via a partial index restricted to non-NULL values. A plain unique constraint would have been simpler and wrong: it forces filler values like `SIN-SERIE-1` onto machines that genuinely have no serial, and those fillers end up permanent and in the reports. `asset_number` is the client's own inventory tag and carries no uniqueness — each client numbers independently, and the same tag legitimately appears across clients.
+
+**The client insert policy names every column staff owns.**
+
+A client can open a maintenance request from the portal, and `maintenances_insert_client` is what allows it: their own active machine, always `solicitado`, with no date or technician. Every field added to the cost breakdown extends that policy's NULL list — `cost_subtotal`, `tax_amount`, `hour_meter`, `report_ref`, `quote_ref` — because otherwise a client posting directly to the endpoint could write their own price. `location_id` is deliberately excluded from the list: the server fills it from the machine, so the client never chooses where the work is recorded.
+
 **Maintenance records are archived, not deleted.**
 
 Deletion of a maintenance record is a soft archive. A hard delete is permanent, and maintenance history is the thing clients dispute and the thing the business bills against — the one table where an accidental click should not be final. Everything else deletes normally.
@@ -71,7 +93,9 @@ The obvious choice was a scalable SVG. The SVG in hand was 108 KB, because it wa
 
 ## Stack
 
-Next.js 15 (App Router) and TypeScript on Vercel. Supabase for Postgres, Auth, and row-level security. Data access goes through the Supabase JS client with its generated types — no ORM. Tailwind for styling. Seven versioned migrations. Vitest for unit tests, Playwright for end-to-end.
+Next.js 16 (App Router) and TypeScript on Vercel. Supabase for Postgres, Auth, and row-level security. Data access goes through the Supabase JS client with its generated types — no ORM. Tailwind for styling. Eight versioned migrations. Vitest for unit tests, Playwright for end-to-end.
+
+One consequence of Next 16 worth knowing before you go looking for it: the middleware lives in `src/proxy.ts`, not `middleware.ts`.
 
 ## Running locally
 

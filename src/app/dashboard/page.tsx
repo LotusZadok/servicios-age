@@ -3,7 +3,8 @@ import { requireUser } from '@/lib/auth'
 
 const sections = [
   { href: '/dashboard/clients', label: 'Clientes', desc: 'Fichas y datos de contacto' },
-  { href: '/dashboard/machines', label: 'Máquinas', desc: 'Inventario con marca y tipo' },
+  { href: '/dashboard/locations', label: 'Sedes', desc: 'Tiendas y sucursales por cliente' },
+  { href: '/dashboard/machines', label: 'Máquinas', desc: 'Inventario con marca, tipo y sede' },
   { href: '/dashboard/brands', label: 'Marcas', desc: 'Catálogo de fabricantes' },
   { href: '/dashboard/machine-types', label: 'Tipos', desc: 'Categorías de maquinaria' },
   { href: '/dashboard/reports', label: 'Reportes', desc: 'Exportar catálogo en CSV' },

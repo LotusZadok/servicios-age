@@ -86,12 +86,24 @@ input,
 select,
 textarea {
   font-family: inherit;
-  font-size: 0.9rem;
+  /* 16px es un mínimo funcional, no estético: Safari iOS hace zoom automático
+     al enfocar cualquier campo con fuente menor, y el usuario queda con la
+     página desencuadrada. Debajo de sm mandamos 1rem; de sm para arriba
+     volvemos a 0.9rem, que es la densidad del diseño. */
+  font-size: 1rem;
   color: var(--ink);
   background: var(--surface);
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-sm);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+@media (width >= 40rem) {
+  input,
+  select,
+  textarea {
+    font-size: 0.9rem;
+  }
 }
 
 input::placeholder,
@@ -353,13 +365,38 @@ tbody tr:nth-child(even) { background: color-mix(in srgb, var(--surface-2) 55%, 
 tbody tr:hover { background: var(--surface-2); }
 td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 
-/* ---------- Responsive: let wide tables scroll instead of the page ---------- */
-@media (max-width: 640px) {
+/* ---------- Responsive ----------
+   El scroll horizontal de las tablas lo resuelve <TableScroll>, no esta hoja:
+   hacerlo acá obligaba a poner display:block sobre el <table>, lo que borra
+   los roles ARIA de tabla. Acá sólo queda el nowrap, que es lo que fuerza a la
+   tabla a desbordar el contenedor en vez de aplastar las columnas.
+   40rem / 48rem son sm y md de Tailwind. */
+@media (width < 40rem) {
   main table {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
     white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Debajo de md las acciones de fila conviven con el dedo, no con el mouse:
+   0.85rem de texto son ~18px de alto contra los 44px de área táctil mínima. */
+@media (width < 48rem) {
+  .link-edit,
+  .link-danger {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  /* En el panel colapsado los links se apilan: el subrayado activo está
+     posicionado para una barra horizontal y ahí queda flotando fuera de lugar.
+     Vertical, el estado activo lo marcan el color y el peso. */
+  .nav-link {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    width: 100%;
+  }
+  .nav-link[data-active="true"]::after {
+    content: none;
   }
 }

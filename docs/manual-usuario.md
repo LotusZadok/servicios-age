@@ -9,8 +9,8 @@ mantenimientos y un portal de solo lectura para clientes.
 
 | Rol | Acceso | Puede |
 |---|---|---|
-| **admin** | Panel interno (`/dashboard`) | Todo: crear/editar clientes, máquinas, marcas, tipos y mantenimientos; **archivar** registros; gestionar usuarios internos; habilitar acceso al portal a clientes; descargar reportes. |
-| **empleado** | Panel interno (`/dashboard`) | Crear y editar clientes, máquinas, marcas, tipos y mantenimientos. **No** puede archivar registros, ni gestionar usuarios, ni habilitar acceso a clientes. |
+| **admin** | Panel interno (`/dashboard`) | Todo: crear/editar clientes, sedes, máquinas, marcas, tipos y mantenimientos; **archivar** registros; gestionar usuarios internos; habilitar acceso al portal a clientes; descargar reportes. |
+| **empleado** | Panel interno (`/dashboard`) | Crear y editar clientes, sedes, máquinas, marcas, tipos y mantenimientos. **No** puede archivar registros, ni gestionar usuarios, ni habilitar acceso a clientes. |
 | **cliente** | Portal externo (`/portal`) | Solo lectura: ver su ficha, sus máquinas y el historial de mantenimientos de cada una. No ve nada de otros clientes ni el panel interno. |
 
 Cada quien entra por la **misma pantalla de login**; el sistema lo lleva
@@ -35,10 +35,24 @@ Las cuentas de acceso las crea siempre un administrador (no hay auto-registro).
 ### Clientes
 Campos: **nombre** (obligatorio), correo, teléfono, dirección.
 
+### Sedes
+Las tiendas o sucursales de un cliente. Campos: **cliente** (obligatorio),
+**nombre** (obligatorio) y dirección. El nombre solo tiene que ser único dentro
+del cliente: dos clientes pueden tener cada uno una sede "Centro".
+
 ### Máquinas
-Campos: **nombre** (obligatorio), número de serie, **modelo**, **marca**,
-**tipo**, y **cliente dueño** (opcional — asigna la máquina a un cliente). La marca
-y el tipo se eligen de listas; deben existir antes de crear la máquina.
+Campos: **nombre** (obligatorio), número de serie, **número de activo**,
+**modelo**, **marca**, **tipo**, **cliente dueño** (opcional) y **sede actual**
+(opcional). La marca y el tipo se eligen de listas; deben existir antes de crear
+la máquina.
+
+- El **número de serie** es del fabricante. Es opcional, pero si se llena no
+  puede repetirse en otra máquina.
+- El **número de activo** es la placa de inventario del cliente. Puede repetirse
+  entre clientes.
+- La **sede actual** es dónde está la máquina *hoy*: cámbiala cuando se preste a
+  otra tienda. Solo se ofrecen las sedes del cliente dueño, así que hay que
+  elegir el cliente primero.
 
 ### Marcas y Tipos de maquinaria
 Campos: **nombre** (obligatorio) y descripción.
@@ -57,7 +71,10 @@ referencias (por ejemplo, mantenimientos ligados a una máquina).
 
 - Solo un **admin** puede archivar.
 - Los registros archivados **desaparecen de las listas** internas y de los
-  selectores (marca/tipo/cliente).
+  selectores (marca/tipo/cliente/sede). Excepción a propósito: si una máquina o
+  un mantenimiento ya apuntaba a una sede archivada, esa sede sigue apareciendo
+  en su formulario, marcada como *(archivada)*, para que editar cualquier otro
+  campo no la borre en silencio.
 - Los datos y su historial se conservan en la base de datos.
 
 ### Archivar un cliente = darlo de baja
@@ -76,12 +93,37 @@ Cuando archivas un **cliente**, además de ocultarlo de las listas:
 Sección **"Mantenimientos"** del panel. Cada registro tiene:
 
 - **Máquina** (obligatoria)
+- **Sede donde se atendió** (opcional)
 - **Descripción** (obligatoria)
 - **Fecha**
 - **Técnico responsable** (un usuario admin/empleado; opcional)
 - **Tipo**: correctivo o preventivo
 - **Estado**: programado / en proceso / completado
-- **Costo** (opcional)
+- **Horímetro**: la lectura tomada en la visita
+- **Subtotal**, **impuesto** y **total**
+- **N.º de boleta o reporte** y **N.º de proforma**
+
+La **sede** se propone sola a partir de la ubicación actual de la máquina, pero
+queda editable y luego **no vuelve a cambiar**: es la foto de dónde se hizo ese
+trabajo. Si la máquina se presta después a otra tienda, el historial sigue
+diciendo dónde se atendió, que es lo que hay que poder mostrar.
+
+El **impuesto** se propone al 13 % del subtotal y es editable, para trabajos
+exentos o boletas que no cuadran al centavo. Se guarda el **monto**, no la tasa:
+si el IVA cambia, los mantenimientos ya registrados siguen coincidiendo con la
+boleta que se emitió ese día. El **total** lo calcula el sistema (subtotal +
+impuesto) y no se escribe a mano.
+
+> **Dejar el campo de impuesto vacío no significa "exento".** Vacío significa
+> que el monto del impuesto **todavía no se ha digitado**: es un dato faltante,
+> no un cero. Un servicio realmente **exento se registra con impuesto `0`**.
+>
+> La diferencia importa al leer los reportes: un mantenimiento con impuesto
+> vacío aparece sin monto de impuesto y su total se calcula solo con el
+> subtotal, pero eso es un registro incompleto que alguien debe terminar de
+> llenar. Uno con impuesto `0` está completo y afirma que no se cobró impuesto.
+> Si ambos están vacíos —subtotal e impuesto— el total también queda vacío: es
+> un mantenimiento aún sin facturar.
 
 El **cliente** de un mantenimiento se deduce de la máquina (la máquina ya tiene su
 cliente dueño), así que no se captura por separado.
@@ -97,7 +139,7 @@ máquina (solo una descripción de lo que necesita). Llega como estado **solicit
 - Aparece **destacada y primero** en la lista de Mantenimientos, y la navegación
   muestra un **contador** de solicitudes pendientes (ej. "Mantenimientos (3)").
 - El staff la **agenda** abriéndola y cambiando el estado a *programado*, con fecha,
-  técnico y costo; o la **cancela** (estado *cancelado*) si no se realizará.
+  técnico y costos; o la **cancela** (estado *cancelado*) si no se realizará.
 - El cliente solo puede crear la solicitud: no puede editarla ni cancelarla; ve su
   avance en el historial de la máquina.
 
@@ -135,9 +177,12 @@ Comparte el correo y la contraseña temporal con el cliente para que entre al po
 
 El cliente entra por el mismo login y llega a **su portal**:
 - **Su información**: nombre, correo, teléfono, dirección.
-- **Sus máquinas**: cada una con marca, tipo y modelo.
-- Al abrir una máquina: su **historial de mantenimientos** (fecha, tipo, estado,
-  descripción).
+- **Sus máquinas**: cada una con marca, tipo, modelo y **sede actual**.
+- Al abrir una máquina: su **historial de mantenimientos** (fecha, **sede**, tipo,
+  estado, descripción). La sede de cada línea es dónde se hizo *ese* trabajo, así
+  que puede no coincidir con la sede actual de la máquina.
+
+El cliente ve sus sedes, pero no las administra: las crea y edita el staff.
 
 El cliente no ve datos de otros clientes. Sí puede **solicitar un mantenimiento**
 desde la página de cada máquina (ver sección 5); editar su propia ficha se evaluará en
@@ -148,7 +193,9 @@ una fase futura.
 ## 9. Reportes
 
 Sección **"Reportes"** → **"Descargar catálogo (CSV)"** genera un archivo con
-clientes, máquinas, marcas y tipos. Se abre en Excel.
+clientes, **sedes**, máquinas (con número de activo y sede), **mantenimientos**
+(con sede, horímetro, subtotal, impuesto, total y los números de boleta y
+proforma), marcas y tipos. Se abre en Excel.
 
 ---
 
@@ -161,5 +208,9 @@ clientes, máquinas, marcas y tipos. Se abre en Excel.
 - Solo los administradores archivan registros y gestionan accesos.
 - Un cliente puede tener a lo sumo un acceso al portal (restricción en la base de
   datos), lo que garantiza que archivarlo sí lo da de baja.
+- Al **solicitar** un mantenimiento, la base de datos exige que el cliente no fije
+  subtotal, impuesto, horímetro ni números de boleta o proforma. Esos campos los
+  llena el staff: un cliente no puede escribir su propio costo ni siquiera
+  saltándose la pantalla.
 - Las contraseñas y llaves nunca se guardan en el código; viven en variables de
   entorno del servidor.

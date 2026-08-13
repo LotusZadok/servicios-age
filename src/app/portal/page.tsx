@@ -15,7 +15,7 @@ export default async function PortalHome() {
 
   const { data: machines } = await supabase
     .from('machines')
-    .select('*, brands(name), machine_types(name)')
+    .select('*, brands(name), machine_types(name), locations(name)')
     .eq('client_id', profile.client_id ?? '')
     .eq('active', true)
     .order('name')
@@ -58,6 +58,9 @@ export default async function PortalHome() {
                 <p className="text-sm text-[var(--muted)]">
                   {m.brands?.name} · {m.machine_types?.name}
                   {m.model ? ` · ${m.model}` : ''}
+                </p>
+                <p className="text-sm text-[var(--muted)]">
+                  Sede: {m.locations?.name ?? 'sin asignar'}
                 </p>
                 <span className="mono mt-auto text-xs text-[var(--accent-ink)] transition-transform group-hover:translate-x-0.5">
                   Ver historial →

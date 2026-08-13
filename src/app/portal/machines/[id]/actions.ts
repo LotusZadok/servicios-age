@@ -17,7 +17,7 @@ export async function requestMaintenance(machineId: string, formData: FormData) 
   // Defense in depth: confirm the machine belongs to this client and is active.
   const { data: machine } = await supabase
     .from('machines')
-    .select('id')
+    .select('id, location_id')
     .eq('id', machineId)
     .eq('client_id', profile.client_id ?? '')
     .eq('active', true)
@@ -31,6 +31,9 @@ export async function requestMaintenance(machineId: string, formData: FormData) 
     machine_id: machineId,
     description,
     status: 'solicitado',
+    // La sede sale de la máquina que acabamos de leer en el servidor, no del
+    // formulario: el cliente no elige dónde queda registrado el trabajo.
+    location_id: machine.location_id,
   })
 
   if (error) {

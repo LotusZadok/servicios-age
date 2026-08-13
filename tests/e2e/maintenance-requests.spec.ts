@@ -15,9 +15,13 @@ test('un cliente solicita un mantenimiento y el staff lo ve como pendiente', asy
   await page.getByLabel('¿Qué necesita?').fill(descripcion)
   await page.getByRole('button', { name: 'Enviar solicitud' }).click()
 
-  // The request shows in this machine's history as "solicitado".
+  // The request shows in this machine's history as "solicitado", with the
+  // machine's sede recorded as a snapshot by the server action.
   await expect(page.getByRole('cell', { name: descripcion })).toBeVisible()
   await expect(page.getByRole('cell', { name: 'solicitado' }).first()).toBeVisible()
+  await expect(
+    page.getByRole('row', { name: new RegExp(descripcion) })
+  ).toContainText('Sede Central E2E')
 
   // Staff sees a pending indicator and a "Solicitado" badge.
   await page.getByRole('button', { name: 'Salir' }).click()

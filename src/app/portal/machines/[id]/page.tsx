@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { requireClient } from '@/lib/auth'
 import { createClient } from '@/lib/supabase/server'
 import { StatusBadge } from '@/components/status-badge'
+import { TableScroll } from '@/components/table-scroll'
 import { requestMaintenance } from './actions'
 
 export default async function PortalMachinePage({
@@ -20,7 +21,7 @@ export default async function PortalMachinePage({
   // filter is defense in depth.
   const { data: machine } = await supabase
     .from('machines')
-    .select('*, brands(name), machine_types(name)')
+    .select('*, brands(name), machine_types(name), locations(name)')
     .eq('id', id)
     .eq('client_id', profile.client_id ?? '')
     .eq('active', true)
@@ -32,7 +33,7 @@ export default async function PortalMachinePage({
 
   const { data: maintenances } = await supabase
     .from('maintenances')
-    .select('*')
+    .select('*, locations(name)')
     .eq('machine_id', id)
     .order('created_at', { ascending: false })
 
@@ -46,6 +47,10 @@ export default async function PortalMachinePage({
         {machine.brands?.name} · {machine.machine_types?.name}
         {machine.model ? ` · ${machine.model}` : ''}
         {machine.serial_number ? ` · Serie ${machine.serial_number}` : ''}
+        {machine.asset_number ? ` · Activo ${machine.asset_number}` : ''}
+      </p>
+      <p className="mt-1 text-sm text-[var(--muted)]">
+        Sede actual: {machine.locations?.name ?? 'sin asignar'}
       </p>
 
       <section className="card mt-6 max-w-md p-5">
@@ -77,10 +82,12 @@ export default async function PortalMachinePage({
           </span>
         </div>
       ) : (
-        <table className="w-full border-collapse bg-white">
+        <TableScroll>
+        <table className="min-w-full border-collapse bg-white">
           <thead>
             <tr className="border-b text-left text-sm">
               <th className="p-2">Fecha</th>
+              <th className="p-2">Sede</th>
               <th className="p-2">Tipo</th>
               <th className="p-2">Estado</th>
               <th className="p-2">Descripción</th>
@@ -90,6 +97,9 @@ export default async function PortalMachinePage({
             {(maintenances ?? []).map((m) => (
               <tr key={m.id} className="border-b text-sm">
                 <td className="p-2"><span className="mono">{m.date ?? '—'}</span></td>
+                {/* La sede del historial es la de ese trabajo, no la actual de
+                    la máquina: por eso puede diferir del encabezado. */}
+                <td className="p-2">{m.locations?.name ?? '—'}</td>
                 <td className="p-2">{m.is_corrective ? 'Correctivo' : 'Preventivo'}</td>
                 <td className="p-2"><StatusBadge status={m.status} /></td>
                 <td className="p-2">{m.description}</td>
@@ -97,6 +107,7 @@ export default async function PortalMachinePage({
             ))}
           </tbody>
         </table>
+        </TableScroll>
       )}
     </div>
   )

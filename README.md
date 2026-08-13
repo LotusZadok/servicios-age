@@ -80,7 +80,9 @@ The obvious choice was a scalable SVG. The SVG in hand was 108 KB, because it wa
 
 ## Stack
 
-Next.js 15 (App Router) and TypeScript on Vercel. Supabase for Postgres, Auth, and row-level security. Data access goes through the Supabase JS client with its generated types — no ORM. Tailwind for styling. Eight versioned migrations. Vitest for unit tests, Playwright for end-to-end.
+Next.js 16 (App Router) and TypeScript on Vercel. Supabase for Postgres, Auth, and row-level security. Data access goes through the Supabase JS client with its generated types — no ORM. Tailwind for styling. Eight versioned migrations. Vitest for unit tests, Playwright for end-to-end.
+
+One consequence of Next 16 worth knowing before you go looking for it: the middleware lives in `src/proxy.ts`, not `middleware.ts`.
 
 ## Running locally
 

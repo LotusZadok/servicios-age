@@ -60,3 +60,7 @@ CLAUDE.md
 AGENTS.md
 .claude/
 .mcp.json
+
+# Contexto interno: ref de Supabase, estado comercial y análisis de términos de
+# servicio. El repositorio es público; este documento se transporta a mano.
+docs/contexto-proyecto-age.md

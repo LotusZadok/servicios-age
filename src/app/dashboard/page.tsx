@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { requireUser } from '@/lib/auth'
 import { StatusBadge } from '@/components/status-badge'
+import { TableScroll } from '@/components/table-scroll'
 import { orDash } from '@/lib/format'
 
 export default async function DashboardHome() {
@@ -54,6 +55,7 @@ export default async function DashboardHome() {
           </span>
         </div>
       ) : (
+        <TableScroll>
         <table>
           <thead>
             <tr>
@@ -74,6 +76,7 @@ export default async function DashboardHome() {
             ))}
           </tbody>
         </table>
+        </TableScroll>
       )}
     </div>
   )

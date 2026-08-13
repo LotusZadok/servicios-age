@@ -83,26 +83,26 @@ export default async function PortalMachinePage({
         </div>
       ) : (
         <TableScroll>
-        <table className="min-w-full border-collapse bg-white">
+        <table>
           <thead>
-            <tr className="border-b text-left text-sm">
-              <th className="p-2">Fecha</th>
-              <th className="p-2">Sede</th>
-              <th className="p-2">Tipo</th>
-              <th className="p-2">Estado</th>
-              <th className="p-2">Descripción</th>
+            <tr>
+              <th>Fecha</th>
+              <th>Sede</th>
+              <th>Tipo</th>
+              <th>Estado</th>
+              <th>Descripción</th>
             </tr>
           </thead>
           <tbody>
             {(maintenances ?? []).map((m) => (
-              <tr key={m.id} className="border-b text-sm">
-                <td className="p-2"><span className="mono">{m.date ?? '—'}</span></td>
+              <tr key={m.id}>
+                <td><span className="mono">{m.date ?? '—'}</span></td>
                 {/* La sede del historial es la de ese trabajo, no la actual de
                     la máquina: por eso puede diferir del encabezado. */}
-                <td className="p-2">{m.locations?.name ?? '—'}</td>
-                <td className="p-2">{m.is_corrective ? 'Correctivo' : 'Preventivo'}</td>
-                <td className="p-2"><StatusBadge status={m.status} /></td>
-                <td className="p-2">{m.description}</td>
+                <td>{m.locations?.name ?? '—'}</td>
+                <td>{m.is_corrective ? 'Correctivo' : 'Preventivo'}</td>
+                <td><StatusBadge status={m.status} /></td>
+                <td>{m.description}</td>
               </tr>
             ))}
           </tbody>

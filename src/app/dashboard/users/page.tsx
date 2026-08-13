@@ -28,20 +28,20 @@ export default async function UsersPage({
       </div>
       {error && <p className="mb-4 text-sm link-danger">{error}</p>}
       <TableScroll>
-      <table className="min-w-full border-collapse bg-white">
+      <table>
         <thead>
-          <tr className="border-b text-left text-sm">
-            <th className="p-2">Nombre</th>
-            <th className="p-2">Rol</th>
-            <th className="p-2" />
+          <tr>
+            <th>Nombre</th>
+            <th>Rol</th>
+            <th />
           </tr>
         </thead>
         <tbody>
           {(profiles ?? []).map((p) => (
-            <tr key={p.id} className="border-b text-sm">
-              <td className="p-2">{p.full_name}</td>
-              <td className="p-2">{p.role}</td>
-              <td className="p-2">
+            <tr key={p.id}>
+              <td>{p.full_name}</td>
+              <td>{p.role}</td>
+              <td>
                 <div className="flex items-center gap-3">
                   <form action={updateUserRole.bind(null, p.id)} className="flex items-center gap-2">
                     <select name="role" defaultValue={p.role} className="rounded border px-2 py-1">

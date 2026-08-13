@@ -32,34 +32,34 @@ export default async function MachinesPage() {
         </div>
       ) : (
       <TableScroll>
-      <table className="min-w-full border-collapse bg-white">
+      <table>
         <thead>
-          <tr className="border-b text-left text-sm">
-            <th className="p-2">Nombre</th>
-            <th className="p-2">Serie</th>
-            <th className="p-2">N.º activo</th>
-            <th className="p-2">Modelo</th>
-            <th className="p-2">Marca</th>
-            <th className="p-2">Tipo</th>
-            <th className="p-2">Cliente</th>
-            <th className="p-2">Sede</th>
-            <th className="p-2" />
+          <tr>
+            <th>Nombre</th>
+            <th>Serie</th>
+            <th>N.º activo</th>
+            <th>Modelo</th>
+            <th>Marca</th>
+            <th>Tipo</th>
+            <th>Cliente</th>
+            <th>Sede</th>
+            <th />
           </tr>
         </thead>
         <tbody>
           {(machines ?? []).map((machine) => (
-            <tr key={machine.id} className="border-b text-sm">
-              <td className="p-2">{machine.name}</td>
-              <td className="p-2"><span className="mono">{machine.serial_number}</span></td>
-              <td className="p-2"><span className="mono">{machine.asset_number}</span></td>
-              <td className="p-2"><span className="mono">{machine.model}</span></td>
-              <td className="p-2">{machine.brands?.name}</td>
-              <td className="p-2">{machine.machine_types?.name}</td>
-              <td className="p-2">{machine.clients?.name}</td>
-              <td className="p-2">{machine.locations?.name}</td>
+            <tr key={machine.id}>
+              <td>{machine.name}</td>
+              <td><span className="mono">{machine.serial_number}</span></td>
+              <td><span className="mono">{machine.asset_number}</span></td>
+              <td><span className="mono">{machine.model}</span></td>
+              <td>{machine.brands?.name}</td>
+              <td>{machine.machine_types?.name}</td>
+              <td>{machine.clients?.name}</td>
+              <td>{machine.locations?.name}</td>
               {/* El flex va en un div interno: sobre el propio <td>, display:flex
                   le quita el rol de celda. */}
-              <td className="p-2">
+              <td>
                 <div className="flex items-center gap-3">
                   <Link href={`/dashboard/machines/${machine.id}/edit`} className="link-edit">
                     Editar

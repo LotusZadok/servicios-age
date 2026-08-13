@@ -29,24 +29,24 @@ export default async function LocationsPage() {
         </div>
       ) : (
       <TableScroll>
-      <table className="min-w-full border-collapse bg-white">
+      <table>
         <thead>
-          <tr className="border-b text-left text-sm">
-            <th className="p-2">Nombre</th>
-            <th className="p-2">Cliente</th>
-            <th className="p-2">Dirección</th>
-            <th className="p-2" />
+          <tr>
+            <th>Nombre</th>
+            <th>Cliente</th>
+            <th>Dirección</th>
+            <th />
           </tr>
         </thead>
         <tbody>
           {(locations ?? []).map((location) => (
-            <tr key={location.id} className="border-b text-sm">
-              <td className="p-2">{location.name}</td>
-              <td className="p-2">{location.clients?.name}</td>
-              <td className="p-2">{location.address}</td>
+            <tr key={location.id}>
+              <td>{location.name}</td>
+              <td>{location.clients?.name}</td>
+              <td>{location.address}</td>
               {/* El flex va en un div interno: sobre el propio <td>, display:flex
                   le quita el rol de celda. */}
-              <td className="p-2">
+              <td>
                 <div className="flex items-center gap-3">
                   <Link href={`/dashboard/locations/${location.id}/edit`} className="link-edit">
                     Editar

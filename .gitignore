@@ -64,3 +64,7 @@ AGENTS.md
 # Contexto interno: ref de Supabase, estado comercial y análisis de términos de
 # servicio. El repositorio es público; este documento se transporta a mano.
 docs/contexto-proyecto-age.md
+
+# Decision de diseño abierta, anotada para uso interno mientras se decide.
+# El repositorio es publico; no aporta nada a quien lo clona.
+docs/superpowers/specs/2026-08-17-altura-del-header-sticky-design.md

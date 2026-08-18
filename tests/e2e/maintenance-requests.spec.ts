@@ -31,7 +31,7 @@ test('un cliente solicita un mantenimiento y el staff lo ve como pendiente', asy
   await page.getByRole('button', { name: 'Entrar' }).click()
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 })
 
-  await expect(page.getByRole('link', { name: /Mantenimientos \(\d+\)/ })).toBeVisible()
+  await expect(page.getByRole('link', { name: /Mantenimientos, \d+ pendientes?/ })).toBeVisible()
   await page.goto('/dashboard/maintenances')
   await expect(page.getByText('Solicitado').first()).toBeVisible()
 })

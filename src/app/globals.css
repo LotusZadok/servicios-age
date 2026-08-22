@@ -133,9 +133,27 @@ textarea:focus-visible {
   box-shadow: var(--ring);
 }
 
+/* Toda etiqueta de formulario es un bloque sobre su campo. Estaba repetido
+   como `block text-sm font-medium` en las 46 etiquetas de la app. */
 label {
+  display: block;
+  font-size: var(--text-md);
   color: var(--ink-soft);
   font-weight: 500;
+}
+
+/* El campo dentro de un grupo etiqueta + control. El borde y el radio ya los
+   pone la regla de elemento de arriba; esto es sólo ancho, separación de la
+   etiqueta y respiro interno. Va como clase y no en la regla de elemento
+   porque hay controles que viven en línea (el select de rol en Usuarios) y no
+   deben ocupar todo el ancho. */
+.field {
+  width: 100%;
+  margin-top: 0.25rem;
+  padding: 0.55rem 0.75rem;
+}
+.field:disabled {
+  background: var(--surface-2);
 }
 
 /* ---------- Tables (auto-upgrades every list page) ----------

@@ -32,66 +32,51 @@ export async function MachineFields({ defaults }: { defaults?: MachineDefaults }
   return (
     <>
       <div>
-        <label htmlFor="name" className="block text-sm font-medium">
-          Nombre
-        </label>
+        <label htmlFor="name">Nombre</label>
         <input
           id="name"
           name="name"
           required
           defaultValue={defaults?.name ?? ''}
-          className="mt-1 w-full rounded border px-3 py-2"
+          className="field"
         />
       </div>
       <div>
-        <label htmlFor="serial_number" className="block text-sm font-medium">
-          Número de serie (opcional)
-        </label>
+        <label htmlFor="serial_number">Número de serie (opcional)</label>
         <input
           id="serial_number"
           name="serial_number"
           defaultValue={defaults?.serial_number ?? ''}
-          className="mt-1 w-full rounded border px-3 py-2"
+          className="field"
         />
         <p className="mt-1 text-xs text-[var(--muted)]">
           Del fabricante. Si se llena, no puede repetirse en otra máquina.
         </p>
       </div>
       <div>
-        <label htmlFor="asset_number" className="block text-sm font-medium">
-          Número de activo (opcional)
-        </label>
+        <label htmlFor="asset_number">Número de activo (opcional)</label>
         <input
           id="asset_number"
           name="asset_number"
           defaultValue={defaults?.asset_number ?? ''}
-          className="mt-1 w-full rounded border px-3 py-2"
+          className="field"
         />
         <p className="mt-1 text-xs text-[var(--muted)]">
           La placa de inventario del cliente. Puede repetirse entre clientes.
         </p>
       </div>
       <div>
-        <label htmlFor="model" className="block text-sm font-medium">
-          Modelo
-        </label>
-        <input
-          id="model"
-          name="model"
-          defaultValue={defaults?.model ?? ''}
-          className="mt-1 w-full rounded border px-3 py-2"
-        />
+        <label htmlFor="model">Modelo</label>
+        <input id="model" name="model" defaultValue={defaults?.model ?? ''} className="field" />
       </div>
       <div>
-        <label htmlFor="brand_id" className="block text-sm font-medium">
-          Marca
-        </label>
+        <label htmlFor="brand_id">Marca</label>
         <select
           id="brand_id"
           name="brand_id"
           required
           defaultValue={defaults?.brand_id ?? ''}
-          className="mt-1 w-full rounded border px-3 py-2"
+          className="field"
         >
           {(brands ?? []).map((brand) => (
             <option key={brand.id} value={brand.id}>{brand.name}</option>
@@ -99,15 +84,13 @@ export async function MachineFields({ defaults }: { defaults?: MachineDefaults }
         </select>
       </div>
       <div>
-        <label htmlFor="type_id" className="block text-sm font-medium">
-          Tipo
-        </label>
+        <label htmlFor="type_id">Tipo</label>
         <select
           id="type_id"
           name="type_id"
           required
           defaultValue={defaults?.type_id ?? ''}
-          className="mt-1 w-full rounded border px-3 py-2"
+          className="field"
         >
           {(types ?? []).map((type) => (
             <option key={type.id} value={type.id}>{type.name}</option>

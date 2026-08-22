@@ -34,49 +34,30 @@ export default async function EditClientPage({
         <h1 className="text-2xl font-semibold">Editar cliente</h1>
       {error && <p className="text-sm link-danger">{error}</p>}
       <div>
-        <label htmlFor="name" className="block text-sm font-medium">
-          Nombre
-        </label>
-        <input
-          id="name"
-          name="name"
-          defaultValue={client.name}
-          required
-          className="mt-1 w-full rounded border px-3 py-2"
-        />
+        <label htmlFor="name">Nombre</label>
+        <input id="name" name="name" defaultValue={client.name} required className="field" />
       </div>
       <div>
-        <label htmlFor="email" className="block text-sm font-medium">
-          Correo
-        </label>
+        <label htmlFor="email">Correo</label>
         <input
           id="email"
           name="email"
           type="email"
           defaultValue={client.email ?? ''}
-          className="mt-1 w-full rounded border px-3 py-2"
+          className="field"
         />
       </div>
       <div>
-        <label htmlFor="phone" className="block text-sm font-medium">
-          Teléfono
-        </label>
-        <input
-          id="phone"
-          name="phone"
-          defaultValue={client.phone ?? ''}
-          className="mt-1 w-full rounded border px-3 py-2"
-        />
+        <label htmlFor="phone">Teléfono</label>
+        <input id="phone" name="phone" defaultValue={client.phone ?? ''} className="field" />
       </div>
       <div>
-        <label htmlFor="address" className="block text-sm font-medium">
-          Dirección
-        </label>
+        <label htmlFor="address">Dirección</label>
         <input
           id="address"
           name="address"
           defaultValue={client.address ?? ''}
-          className="mt-1 w-full rounded border px-3 py-2"
+          className="field"
         />
       </div>
       <button type="submit" className="btn btn-primary">
@@ -95,29 +76,25 @@ export default async function EditClientPage({
             <form action={grantPortalAccess.bind(null, id)} className="mt-3 space-y-3">
               <input type="hidden" name="full_name" value={client.name} />
               <div>
-                <label htmlFor="access-email" className="block text-sm font-medium">
-                  Correo de acceso
-                </label>
+                <label htmlFor="access-email">Correo de acceso</label>
                 <input
                   id="access-email"
                   name="email"
                   type="email"
                   required
                   defaultValue={client.email ?? ''}
-                  className="mt-1 w-full rounded border px-3 py-2"
+                  className="field"
                 />
               </div>
               <div>
-                <label htmlFor="access-password" className="block text-sm font-medium">
-                  Contraseña temporal
-                </label>
+                <label htmlFor="access-password">Contraseña temporal</label>
                 <input
                   id="access-password"
                   name="password"
                   type="password"
                   required
                   minLength={6}
-                  className="mt-1 w-full rounded border px-3 py-2"
+                  className="field"
                 />
               </div>
               <button type="submit" className="btn btn-ghost">

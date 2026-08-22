@@ -5,8 +5,11 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { requireUser, requireStaff } from '@/lib/auth'
 import { canDelete } from '@/lib/permissions'
+import { writeAndRedirect } from '@/lib/crud'
 
 type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>
+
+const LISTA = '/dashboard/machines'
 
 function parseForm(formData: FormData) {
   return {
@@ -60,17 +63,10 @@ export async function createMachine(formData: FormData) {
 
   const invalid = await validateLocation(supabase, values)
   if (invalid) {
-    redirect(`/dashboard/machines/new?error=${encodeURIComponent(invalid)}`)
+    redirect(`${LISTA}/new?error=${encodeURIComponent(invalid)}`)
   }
 
-  const { error } = await supabase.from('machines').insert(values)
-
-  if (error) {
-    redirect(`/dashboard/machines/new?error=${encodeURIComponent(error.message)}`)
-  }
-
-  revalidatePath('/dashboard/machines')
-  redirect('/dashboard/machines')
+  await writeAndRedirect(supabase.from('machines').insert(values), LISTA, `${LISTA}/new`)
 }
 
 export async function updateMachine(id: string, formData: FormData) {
@@ -81,17 +77,14 @@ export async function updateMachine(id: string, formData: FormData) {
 
   const invalid = await validateLocation(supabase, values)
   if (invalid) {
-    redirect(`/dashboard/machines/${id}/edit?error=${encodeURIComponent(invalid)}`)
+    redirect(`${LISTA}/${id}/edit?error=${encodeURIComponent(invalid)}`)
   }
 
-  const { error } = await supabase.from('machines').update(values).eq('id', id)
-
-  if (error) {
-    redirect(`/dashboard/machines/${id}/edit?error=${encodeURIComponent(error.message)}`)
-  }
-
-  revalidatePath('/dashboard/machines')
-  redirect('/dashboard/machines')
+  await writeAndRedirect(
+    supabase.from('machines').update(values).eq('id', id),
+    LISTA,
+    `${LISTA}/${id}/edit`
+  )
 }
 
 export async function deleteMachine(id: string) {
@@ -103,5 +96,5 @@ export async function deleteMachine(id: string) {
 
   const supabase = await createClient()
   await supabase.from('machines').update({ active: false }).eq('id', id)
-  revalidatePath('/dashboard/machines')
+  revalidatePath(LISTA)
 }

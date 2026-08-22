@@ -37,9 +37,7 @@ export function CostFields({
   return (
     <>
       <div>
-        <label htmlFor="cost_subtotal" className="block text-sm font-medium">
-          Subtotal
-        </label>
+        <label htmlFor="cost_subtotal">Subtotal</label>
         <input
           id="cost_subtotal"
           name="cost_subtotal"
@@ -53,13 +51,11 @@ export function CostFields({
               setTax(auto === null ? '' : auto.toString())
             }
           }}
-          className="mt-1 w-full rounded border px-3 py-2"
+          className="field"
         />
       </div>
       <div>
-        <label htmlFor="tax_amount" className="block text-sm font-medium">
-          Impuesto
-        </label>
+        <label htmlFor="tax_amount">Impuesto</label>
         <input
           id="tax_amount"
           name="tax_amount"
@@ -70,7 +66,7 @@ export function CostFields({
             setTax(e.target.value)
             setTaxEdited(true)
           }}
-          className="mt-1 w-full rounded border px-3 py-2"
+          className="field"
         />
         <p className="mt-1 text-xs text-[var(--muted)]">
           Se propone el {Math.round(TAX_RATE * 100)} % del subtotal. Editalo si el

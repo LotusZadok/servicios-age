@@ -1,10 +1,12 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { requireUser, requireStaff } from '@/lib/auth'
 import { canDelete } from '@/lib/permissions'
+import { writeAndRedirect } from '@/lib/crud'
+
+const LISTA = '/dashboard/locations'
 
 function parseForm(formData: FormData) {
   return {
@@ -16,30 +18,22 @@ function parseForm(formData: FormData) {
 
 export async function createLocation(formData: FormData) {
   await requireStaff()
-
   const supabase = await createClient()
-  const { error } = await supabase.from('locations').insert(parseForm(formData))
-
-  if (error) {
-    redirect(`/dashboard/locations/new?error=${encodeURIComponent(error.message)}`)
-  }
-
-  revalidatePath('/dashboard/locations')
-  redirect('/dashboard/locations')
+  await writeAndRedirect(
+    supabase.from('locations').insert(parseForm(formData)),
+    LISTA,
+    `${LISTA}/new`
+  )
 }
 
 export async function updateLocation(id: string, formData: FormData) {
   await requireStaff()
-
   const supabase = await createClient()
-  const { error } = await supabase.from('locations').update(parseForm(formData)).eq('id', id)
-
-  if (error) {
-    redirect(`/dashboard/locations/${id}/edit?error=${encodeURIComponent(error.message)}`)
-  }
-
-  revalidatePath('/dashboard/locations')
-  redirect('/dashboard/locations')
+  await writeAndRedirect(
+    supabase.from('locations').update(parseForm(formData)).eq('id', id),
+    LISTA,
+    `${LISTA}/${id}/edit`
+  )
 }
 
 export async function deleteLocation(id: string) {
@@ -54,5 +48,5 @@ export async function deleteLocation(id: string) {
   // historial sigue diciendo dónde se atendió.
   const supabase = await createClient()
   await supabase.from('locations').update({ active: false }).eq('id', id)
-  revalidatePath('/dashboard/locations')
+  revalidatePath(LISTA)
 }

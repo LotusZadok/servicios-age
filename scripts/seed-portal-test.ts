@@ -1,5 +1,4 @@
-import { config } from 'dotenv'
-config({ path: '.env.local' })
+process.loadEnvFile('.env.local')
 
 import { createAdminClient } from '../src/lib/supabase/admin-core'
 

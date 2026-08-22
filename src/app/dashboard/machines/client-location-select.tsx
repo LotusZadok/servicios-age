@@ -36,9 +36,7 @@ export function ClientLocationSelect({
   return (
     <>
       <div>
-        <label htmlFor="client_id" className="block text-sm font-medium">
-          Cliente dueño (opcional)
-        </label>
+        <label htmlFor="client_id">Cliente dueño (opcional)</label>
         <select
           id="client_id"
           name="client_id"
@@ -47,7 +45,7 @@ export function ClientLocationSelect({
             setClientId(e.target.value)
             setLocationId('')
           }}
-          className="mt-1 w-full rounded border px-3 py-2"
+          className="field"
         >
           <option value="">— Sin asignar —</option>
           {clients.map((c) => (
@@ -56,16 +54,14 @@ export function ClientLocationSelect({
         </select>
       </div>
       <div>
-        <label htmlFor="location_id" className="block text-sm font-medium">
-          Sede actual (opcional)
-        </label>
+        <label htmlFor="location_id">Sede actual (opcional)</label>
         <select
           id="location_id"
           name="location_id"
           value={locationId}
           onChange={(e) => setLocationId(e.target.value)}
           disabled={!clientId}
-          className="mt-1 w-full rounded border px-3 py-2 disabled:bg-[var(--surface-2)]"
+          className="field"
         >
           <option value="">— Sin asignar —</option>
           {available.map((l) => (

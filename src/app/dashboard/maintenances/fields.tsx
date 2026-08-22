@@ -46,19 +46,19 @@ export async function MaintenanceFields({ defaults }: { defaults?: MaintenanceDe
         defaultLocationId={defaults?.location_id}
       />
       <div>
-        <label htmlFor="technician_id" className="block text-sm font-medium">Técnico responsable</label>
-        <select id="technician_id" name="technician_id" defaultValue={defaults?.technician_id ?? ''} className="mt-1 w-full rounded border px-3 py-2">
+        <label htmlFor="technician_id">Técnico responsable</label>
+        <select id="technician_id" name="technician_id" defaultValue={defaults?.technician_id ?? ''} className="field">
           <option value="">— Sin asignar —</option>
           {technicians.map((t) => (<option key={t.id} value={t.id}>{t.full_name}</option>))}
         </select>
       </div>
       <div>
-        <label htmlFor="date" className="block text-sm font-medium">Fecha</label>
-        <input id="date" name="date" type="date" defaultValue={defaults?.date ?? ''} className="mt-1 w-full rounded border px-3 py-2" />
+        <label htmlFor="date">Fecha</label>
+        <input id="date" name="date" type="date" defaultValue={defaults?.date ?? ''} className="field" />
       </div>
       <div>
-        <label htmlFor="status" className="block text-sm font-medium">Estado</label>
-        <select id="status" name="status" defaultValue={defaults?.status ?? 'programado'} className="mt-1 w-full rounded border px-3 py-2">
+        <label htmlFor="status">Estado</label>
+        <select id="status" name="status" defaultValue={defaults?.status ?? 'programado'} className="field">
           <option value="solicitado">Solicitado</option>
           <option value="programado">Programado</option>
           <option value="en_proceso">En proceso</option>
@@ -67,8 +67,8 @@ export async function MaintenanceFields({ defaults }: { defaults?: MaintenanceDe
         </select>
       </div>
       <div>
-        <label htmlFor="hour_meter" className="block text-sm font-medium">Horímetro</label>
-        <input id="hour_meter" name="hour_meter" type="number" step="1" min="0" defaultValue={defaults?.hour_meter ?? ''} className="mt-1 w-full rounded border px-3 py-2" />
+        <label htmlFor="hour_meter">Horímetro</label>
+        <input id="hour_meter" name="hour_meter" type="number" step="1" min="0" defaultValue={defaults?.hour_meter ?? ''} className="field" />
         <p className="mt-1 text-xs text-[var(--muted)]">Lectura tomada en la visita, en horas.</p>
       </div>
       <CostFields
@@ -76,20 +76,20 @@ export async function MaintenanceFields({ defaults }: { defaults?: MaintenanceDe
         defaultTax={defaults?.tax_amount}
       />
       <div>
-        <label htmlFor="report_ref" className="block text-sm font-medium">N.º de boleta o reporte</label>
-        <input id="report_ref" name="report_ref" defaultValue={defaults?.report_ref ?? ''} className="mt-1 w-full rounded border px-3 py-2" />
+        <label htmlFor="report_ref">N.º de boleta o reporte</label>
+        <input id="report_ref" name="report_ref" defaultValue={defaults?.report_ref ?? ''} className="field" />
       </div>
       <div>
-        <label htmlFor="quote_ref" className="block text-sm font-medium">N.º de proforma</label>
-        <input id="quote_ref" name="quote_ref" defaultValue={defaults?.quote_ref ?? ''} className="mt-1 w-full rounded border px-3 py-2" />
+        <label htmlFor="quote_ref">N.º de proforma</label>
+        <input id="quote_ref" name="quote_ref" defaultValue={defaults?.quote_ref ?? ''} className="field" />
       </div>
       <label className="flex items-center gap-2 text-sm">
         <input type="checkbox" name="is_corrective" defaultChecked={defaults?.is_corrective ?? false} />
         Correctivo (si se desmarca, es preventivo)
       </label>
       <div>
-        <label htmlFor="description" className="block text-sm font-medium">Descripción</label>
-        <textarea id="description" name="description" required rows={3} defaultValue={defaults?.description ?? ''} className="mt-1 w-full rounded border px-3 py-2" />
+        <label htmlFor="description">Descripción</label>
+        <textarea id="description" name="description" required rows={3} defaultValue={defaults?.description ?? ''} className="field" />
       </div>
     </>
   )

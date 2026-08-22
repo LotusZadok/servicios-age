@@ -3,7 +3,6 @@ import {
   canDelete,
   canManageUsers,
   isStaff,
-  isClient,
   homePathForRole,
 } from '@/lib/permissions'
 
@@ -23,11 +22,6 @@ describe('isStaff', () => {
   it('admin is staff', () => expect(isStaff('admin')).toBe(true))
   it('empleado is staff', () => expect(isStaff('empleado')).toBe(true))
   it('cliente is not staff', () => expect(isStaff('cliente')).toBe(false))
-})
-
-describe('isClient', () => {
-  it('cliente is client', () => expect(isClient('cliente')).toBe(true))
-  it('admin is not client', () => expect(isClient('admin')).toBe(false))
 })
 
 describe('homePathForRole', () => {

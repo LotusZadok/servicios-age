@@ -17,15 +17,13 @@ export async function LocationFields({ defaults }: { defaults?: LocationDefaults
   return (
     <>
       <div>
-        <label htmlFor="client_id" className="block text-sm font-medium">
-          Cliente
-        </label>
+        <label htmlFor="client_id">Cliente</label>
         <select
           id="client_id"
           name="client_id"
           required
           defaultValue={defaults?.client_id ?? ''}
-          className="mt-1 w-full rounded border px-3 py-2"
+          className="field"
         >
           <option value="" disabled>— Selecciona —</option>
           {(clients ?? []).map((c) => (
@@ -34,26 +32,22 @@ export async function LocationFields({ defaults }: { defaults?: LocationDefaults
         </select>
       </div>
       <div>
-        <label htmlFor="name" className="block text-sm font-medium">
-          Nombre
-        </label>
+        <label htmlFor="name">Nombre</label>
         <input
           id="name"
           name="name"
           required
           defaultValue={defaults?.name ?? ''}
-          className="mt-1 w-full rounded border px-3 py-2"
+          className="field"
         />
       </div>
       <div>
-        <label htmlFor="address" className="block text-sm font-medium">
-          Dirección
-        </label>
+        <label htmlFor="address">Dirección</label>
         <input
           id="address"
           name="address"
           defaultValue={defaults?.address ?? ''}
-          className="mt-1 w-full rounded border px-3 py-2"
+          className="field"
         />
       </div>
     </>

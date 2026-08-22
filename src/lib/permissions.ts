@@ -12,10 +12,6 @@ export function isStaff(role: Role): boolean {
   return role === 'admin' || role === 'empleado'
 }
 
-export function isClient(role: Role): boolean {
-  return role === 'cliente'
-}
-
 export function homePathForRole(role: Role): string {
   return role === 'cliente' ? '/portal' : '/dashboard'
 }

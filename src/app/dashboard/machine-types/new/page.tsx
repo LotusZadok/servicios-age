@@ -1,31 +1,10 @@
-import { createMachineType } from '../actions'
+import { CatalogForm } from '@/components/catalog'
 
-export default async function NewMachineTypePage({
+export default async function Page({
   searchParams,
 }: {
   searchParams: Promise<{ error?: string }>
 }) {
   const { error } = await searchParams
-
-  return (
-    <form action={createMachineType} className="max-w-sm space-y-4">
-      <h1 className="text-2xl font-semibold">Nuevo tipo</h1>
-      {error && <p className="text-sm link-danger">{error}</p>}
-      <div>
-        <label htmlFor="name" className="block text-sm font-medium">
-          Nombre
-        </label>
-        <input id="name" name="name" required className="mt-1 w-full rounded border px-3 py-2" />
-      </div>
-      <div>
-        <label htmlFor="description" className="block text-sm font-medium">
-          Descripción
-        </label>
-        <input id="description" name="description" className="mt-1 w-full rounded border px-3 py-2" />
-      </div>
-      <button type="submit" className="btn btn-primary">
-        Guardar
-      </button>
-    </form>
-  )
+  return <CatalogForm tipo="machine-types" error={error} />
 }

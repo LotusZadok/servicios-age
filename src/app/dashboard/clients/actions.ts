@@ -6,46 +6,37 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { requireUser, requireAdmin, requireStaff } from '@/lib/auth'
 import { canDelete } from '@/lib/permissions'
+import { writeAndRedirect } from '@/lib/crud'
+
+const LISTA = '/dashboard/clients'
+
+function parseForm(formData: FormData) {
+  return {
+    name: formData.get('name') as string,
+    email: formData.get('email') as string,
+    phone: formData.get('phone') as string,
+    address: (formData.get('address') as string) || null,
+  }
+}
 
 export async function createClientRecord(formData: FormData) {
   await requireStaff()
-
   const supabase = await createClient()
-  const name = formData.get('name') as string
-  const email = formData.get('email') as string
-  const phone = formData.get('phone') as string
-  const address = (formData.get('address') as string) || null
-
-  const { error } = await supabase.from('clients').insert({ name, email, phone, address })
-
-  if (error) {
-    redirect(`/dashboard/clients/new?error=${encodeURIComponent(error.message)}`)
-  }
-
-  revalidatePath('/dashboard/clients')
-  redirect('/dashboard/clients')
+  await writeAndRedirect(
+    supabase.from('clients').insert(parseForm(formData)),
+    LISTA,
+    `${LISTA}/new`
+  )
 }
 
 export async function updateClientRecord(id: string, formData: FormData) {
   await requireStaff()
-
   const supabase = await createClient()
-  const name = formData.get('name') as string
-  const email = formData.get('email') as string
-  const phone = formData.get('phone') as string
-  const address = (formData.get('address') as string) || null
-
-  const { error } = await supabase
-    .from('clients')
-    .update({ name, email, phone, address })
-    .eq('id', id)
-
-  if (error) {
-    redirect(`/dashboard/clients/${id}/edit?error=${encodeURIComponent(error.message)}`)
-  }
-
-  revalidatePath('/dashboard/clients')
-  redirect('/dashboard/clients')
+  await writeAndRedirect(
+    supabase.from('clients').update(parseForm(formData)).eq('id', id),
+    LISTA,
+    `${LISTA}/${id}/edit`
+  )
 }
 
 export async function deleteClientRecord(id: string) {
@@ -70,7 +61,7 @@ export async function deleteClientRecord(id: string) {
     await admin.auth.admin.updateUserById(access.id, { ban_duration: '876000h' })
   }
 
-  revalidatePath('/dashboard/clients')
+  revalidatePath(LISTA)
 }
 
 export async function grantPortalAccess(clientId: string, formData: FormData) {
@@ -79,6 +70,7 @@ export async function grantPortalAccess(clientId: string, formData: FormData) {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
   const fullName = formData.get('full_name') as string
+  const volver = `${LISTA}/${clientId}/edit`
 
   const admin = createAdminClient()
 
@@ -89,9 +81,7 @@ export async function grantPortalAccess(clientId: string, formData: FormData) {
   })
 
   if (error || !data.user) {
-    redirect(
-      `/dashboard/clients/${clientId}/edit?error=${encodeURIComponent(error?.message ?? 'Error desconocido')}`
-    )
+    redirect(`${volver}?error=${encodeURIComponent(error?.message ?? 'Error desconocido')}`)
   }
 
   const { error: profileError } = await admin.from('profiles').insert({
@@ -104,11 +94,9 @@ export async function grantPortalAccess(clientId: string, formData: FormData) {
   if (profileError) {
     // Roll back the orphaned auth user so the email stays reusable.
     await admin.auth.admin.deleteUser(data.user.id)
-    redirect(
-      `/dashboard/clients/${clientId}/edit?error=${encodeURIComponent(profileError.message)}`
-    )
+    redirect(`${volver}?error=${encodeURIComponent(profileError.message)}`)
   }
 
-  revalidatePath(`/dashboard/clients/${clientId}/edit`)
-  redirect(`/dashboard/clients/${clientId}/edit`)
+  revalidatePath(volver)
+  redirect(volver)
 }

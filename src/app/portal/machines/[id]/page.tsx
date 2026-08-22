@@ -3,6 +3,7 @@ import { requireClient } from '@/lib/auth'
 import { createClient } from '@/lib/supabase/server'
 import { StatusBadge } from '@/components/status-badge'
 import { TableScroll } from '@/components/table-scroll'
+import { orDash } from '@/lib/format'
 import { requestMaintenance } from './actions'
 
 export default async function PortalMachinePage({
@@ -58,16 +59,8 @@ export default async function PortalMachinePage({
         {error && <p className="mt-2 text-sm text-[var(--danger)]">{error}</p>}
         <form action={requestForMachine} className="mt-3 space-y-3">
           <div>
-            <label htmlFor="description" className="block text-sm font-medium">
-              ¿Qué necesita?
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              required
-              rows={3}
-              className="mt-1 w-full rounded border px-3 py-2"
-            />
+            <label htmlFor="description">¿Qué necesita?</label>
+            <textarea id="description" name="description" required rows={3} className="field" />
           </div>
           <button type="submit" className="btn btn-primary">Enviar solicitud</button>
         </form>
@@ -96,10 +89,10 @@ export default async function PortalMachinePage({
           <tbody>
             {(maintenances ?? []).map((m) => (
               <tr key={m.id}>
-                <td><span className="mono">{m.date ?? '—'}</span></td>
+                <td><span className="mono">{orDash(m.date)}</span></td>
                 {/* La sede del historial es la de ese trabajo, no la actual de
                     la máquina: por eso puede diferir del encabezado. */}
-                <td>{m.locations?.name ?? '—'}</td>
+                <td>{orDash(m.locations?.name)}</td>
                 <td>{m.is_corrective ? 'Correctivo' : 'Preventivo'}</td>
                 <td><StatusBadge status={m.status} /></td>
                 <td>{m.description}</td>

@@ -23,15 +23,11 @@ export default async function LoginPage({
             </p>
           )}
           <div className="space-y-1.5">
-            <label htmlFor="email" className="block text-sm">
-              Correo
-            </label>
+            <label htmlFor="email">Correo</label>
             <input id="email" name="email" type="email" required className="w-full px-3 py-2" />
           </div>
           <div className="space-y-1.5">
-            <label htmlFor="password" className="block text-sm">
-              Contraseña
-            </label>
+            <label htmlFor="password">Contraseña</label>
             <input
               id="password"
               name="password"

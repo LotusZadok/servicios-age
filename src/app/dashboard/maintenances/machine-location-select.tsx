@@ -41,7 +41,7 @@ export function MachineLocationSelect({
   return (
     <>
       <div>
-        <label htmlFor="machine_id" className="block text-sm font-medium">Máquina</label>
+        <label htmlFor="machine_id">Máquina</label>
         <select
           id="machine_id"
           name="machine_id"
@@ -52,22 +52,20 @@ export function MachineLocationSelect({
             const next = machines.find((m) => m.id === e.target.value)
             setLocationId(next?.location_id ?? '')
           }}
-          className="mt-1 w-full rounded border px-3 py-2"
+          className="field"
         >
           <option value="" disabled>— Selecciona —</option>
           {machines.map((m) => (<option key={m.id} value={m.id}>{m.name}</option>))}
         </select>
       </div>
       <div>
-        <label htmlFor="location_id" className="block text-sm font-medium">
-          Sede donde se atendió (opcional)
-        </label>
+        <label htmlFor="location_id">Sede donde se atendió (opcional)</label>
         <select
           id="location_id"
           name="location_id"
           value={locationId}
           onChange={(e) => setLocationId(e.target.value)}
-          className="mt-1 w-full rounded border px-3 py-2"
+          className="field"
         >
           <option value="">— Sin registrar —</option>
           {available.map((l) => (

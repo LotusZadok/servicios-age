@@ -1,5 +1,4 @@
-import { config } from 'dotenv'
-config({ path: '.env.local' })
+process.loadEnvFile('.env.local')
 
 import { defineConfig } from '@playwright/test'
 

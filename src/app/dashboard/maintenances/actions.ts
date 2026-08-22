@@ -1,10 +1,12 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { requireUser, requireStaff } from '@/lib/auth'
 import { canDelete } from '@/lib/permissions'
+import { writeAndRedirect } from '@/lib/crud'
+
+const LISTA = '/dashboard/maintenances'
 
 // Un campo numérico vacío es null, no 0: un mantenimiento sin facturar todavía
 // no cuesta cero, simplemente no tiene monto.
@@ -38,30 +40,22 @@ function parseForm(formData: FormData) {
 
 export async function createMaintenance(formData: FormData) {
   await requireStaff()
-
   const supabase = await createClient()
-  const { error } = await supabase.from('maintenances').insert(parseForm(formData))
-
-  if (error) {
-    redirect(`/dashboard/maintenances/new?error=${encodeURIComponent(error.message)}`)
-  }
-
-  revalidatePath('/dashboard/maintenances')
-  redirect('/dashboard/maintenances')
+  await writeAndRedirect(
+    supabase.from('maintenances').insert(parseForm(formData)),
+    LISTA,
+    `${LISTA}/new`
+  )
 }
 
 export async function updateMaintenance(id: string, formData: FormData) {
   await requireStaff()
-
   const supabase = await createClient()
-  const { error } = await supabase.from('maintenances').update(parseForm(formData)).eq('id', id)
-
-  if (error) {
-    redirect(`/dashboard/maintenances/${id}/edit?error=${encodeURIComponent(error.message)}`)
-  }
-
-  revalidatePath('/dashboard/maintenances')
-  redirect('/dashboard/maintenances')
+  await writeAndRedirect(
+    supabase.from('maintenances').update(parseForm(formData)).eq('id', id),
+    LISTA,
+    `${LISTA}/${id}/edit`
+  )
 }
 
 export async function deleteMaintenance(id: string) {
@@ -73,5 +67,5 @@ export async function deleteMaintenance(id: string) {
 
   const supabase = await createClient()
   await supabase.from('maintenances').delete().eq('id', id)
-  revalidatePath('/dashboard/maintenances')
+  revalidatePath(LISTA)
 }

@@ -1,0 +1,27 @@
+-- Un perfil con `client_id` es el acceso al portal de un cliente, y su rol es
+-- siempre 'cliente'. Y al revés: un perfil 'cliente' sin `client_id` no apunta
+-- a nadie.
+--
+-- El agujero que cierra: /dashboard/users listaba TODOS los perfiles, incluidos
+-- los accesos de portal, y su selector de rol sólo ofrecía 'admin' y 'empleado'.
+-- Guardar sobre la fila de un cliente convertía su acceso de portal en una
+-- cuenta de personal interno **conservando el client_id**, es decir, en una
+-- cuenta que ve los datos de todos los clientes.
+--
+-- Va como CHECK de tabla y no como política RLS a propósito: la acción que
+-- cambia el rol escribe con el cliente de rol de servicio, que evita RLS por
+-- diseño, así que una política no habría tocado ese camino. Un CHECK sí lo
+-- alcanza, igual que a un script bajo tsx o a un psql a mano.
+-- `profiles_update_admin_only` queda intacta.
+--
+-- La forma es bidireccional porque hoy ningún camino deja un lado sin el otro:
+--   * la FK profiles.client_id -> clients no declara ON DELETE, así que queda en
+--     NO ACTION: rechaza el borrado del cliente, no anula la columna;
+--   * los clientes se archivan (active = false) y nunca se borran, y archivar
+--     no toca `profiles`: sólo veta al usuario de auth;
+--   * deleteUser borra el usuario de auth y la fila entera se va con el
+--     ON DELETE CASCADE de profiles.id -> auth.users, no queda huérfana;
+--   * los dos únicos inserts de perfiles 'cliente' —grantPortalAccess y
+--     scripts/seed-portal-test.ts— escriben siempre el client_id.
+alter table public.profiles add constraint profiles_portal_role
+  check ((role = 'cliente') = (client_id is not null));

@@ -13,7 +13,15 @@ export default async function UsersPage({
   const { user } = await requireAdmin()
   const { error } = await searchParams
   const supabase = await createClient()
-  const { data: profiles } = await supabase.from('profiles').select('*').order('full_name')
+  // Sólo cuentas internas. Un perfil con `client_id` es el acceso al portal de
+  // un cliente y se gestiona desde la ficha de ese cliente: listarlo aquí, con
+  // un selector que sólo ofrece admin y empleado, invitaba a convertirlo en
+  // personal de un clic.
+  const { data: profiles } = await supabase
+    .from('profiles')
+    .select('*')
+    .is('client_id', null)
+    .order('full_name')
 
   return (
     <div>
@@ -27,6 +35,10 @@ export default async function UsersPage({
         </Link>
       </div>
       {error && <p className="mb-4 text-sm link-danger">{error}</p>}
+      <p className="mb-4 text-sm text-[var(--muted)]">
+        Sólo cuentas internas. Los accesos al portal de los clientes se gestionan
+        desde la ficha de cada cliente.
+      </p>
       <TableScroll>
       <table>
         <thead>

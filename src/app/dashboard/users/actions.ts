@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { requireAdmin } from '@/lib/auth'
+import { roleChangeBlockedReason, type Role } from '@/lib/permissions'
 
 export async function createUser(formData: FormData) {
   await requireAdmin()
@@ -43,28 +44,46 @@ export async function createUser(formData: FormData) {
   redirect('/dashboard/users')
 }
 
+// OJO con la capa que protege este camino.
+//
+// Esta acción escribe con el cliente de rol de servicio, que **ignora RLS**:
+// ninguna política de `profiles` filtra nada de lo que sigue, y
+// `profiles_update_admin_only` no llega a evaluarse. Lo que impide de verdad
+// convertir el acceso de portal de un cliente en una cuenta de personal es la
+// restricción `profiles_portal_role` de la tabla —un CHECK, no una política, y
+// por eso sí aplica al rol de servicio— más la validación de aquí abajo, que
+// existe para dar un mensaje entendible en vez de un error de base de datos.
 export async function updateUserRole(id: string, formData: FormData) {
-  await requireAdmin()
+  const { profile } = await requireAdmin()
 
-  const role = formData.get('role') as string
+  const role = formData.get('role') as Role
   const admin = createAdminClient()
 
-  // Prevent demoting the last remaining admin, which would lock everyone out
-  // of user management (the /dashboard/users routes are admin-only).
-  if (role !== 'admin') {
-    const { data: admins } = await admin
-      .from('profiles')
-      .select('id')
-      .eq('role', 'admin')
+  const { data: target } = await admin
+    .from('profiles')
+    .select('role, client_id')
+    .eq('id', id)
+    .maybeSingle()
 
-    const isLastAdmin =
-      admins != null && admins.length <= 1 && admins.some((a) => a.id === id)
+  if (!target) {
+    redirect(`/dashboard/users?error=${encodeURIComponent('La cuenta ya no existe.')}`)
+  }
 
-    if (isLastAdmin) {
-      redirect(
-        `/dashboard/users?error=${encodeURIComponent('No puedes quitar el rol al último administrador.')}`
-      )
-    }
+  const { count: adminCount } = await admin
+    .from('profiles')
+    .select('*', { count: 'exact', head: true })
+    .eq('role', 'admin')
+
+  const motivo = roleChangeBlockedReason({
+    actorRole: profile.role,
+    targetRole: target.role as Role,
+    targetClientId: target.client_id,
+    nextRole: role,
+    adminCount: adminCount ?? 0,
+  })
+
+  if (motivo) {
+    redirect(`/dashboard/users?error=${encodeURIComponent(motivo)}`)
   }
 
   const { error } = await admin.from('profiles').update({ role }).eq('id', id)

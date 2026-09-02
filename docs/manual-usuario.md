@@ -81,6 +81,8 @@ su propia área.
 administrador: las internas desde «Usuarios», las de cliente desde la ficha del
 cliente.
 
+![Pantalla de inicio de sesión de Servicios AGE, con los campos de correo y contraseña bajo el logotipo.](screenshots/ingresar-al-sistema.png)
+
 ## Salir
 
 El botón **«Salir»**, arriba a la derecha, cierra la sesión y devuelve a la
@@ -197,6 +199,8 @@ En cuanto escriba el subtotal, el impuesto se rellena solo con el 13 %. **En cua
 usted toque el campo de impuesto, deja de recalcularse**, para que un monto escrito
 a mano no desaparezca al corregir el subtotal.
 
+![Formulario de nuevo mantenimiento, con los campos de máquina, sede donde se atendió, técnico, fecha, estado, horímetro, subtotal, impuesto, total calculado y los números de boleta y proforma.](screenshots/registrar-un-mantenimiento.png)
+
 ## Corregir un mantenimiento ya registrado
 
 En la lista de **«Mantenimientos»**, pulse **«Editar»** en la fila
@@ -208,6 +212,8 @@ Sólo si usted cambia la máquina, el formulario ofrece una sede nueva.
 
 Antes de tocar la sede de un mantenimiento antiguo, lea la
 [regla 3](#3-la-sede-de-un-mantenimiento-es-una-instantánea).
+
+![Formulario de edición de un mantenimiento ya guardado, con sus valores cargados y todos los campos modificables.](screenshots/corregir-un-mantenimiento-ya-registrado.png)
 
 ## Atender una solicitud enviada por un cliente
 
@@ -224,6 +230,8 @@ montos: el cliente sólo aporta la descripción de lo que necesita.
 
 Los costos pueden completarse en ese momento o después, cuando exista la boleta.
 
+![Lista de mantenimientos con una solicitud de cliente en la primera fila, marcada como «Solicitado», y el contador de pendientes junto a la pestaña de navegación.](screenshots/atender-una-solicitud-enviada-por-un-cliente.png)
+
 ## Registrar un cliente nuevo
 
 1. Pestaña **«Clientes»** → **«Nuevo cliente»**.
@@ -232,6 +240,8 @@ Los costos pueden completarse en ese momento o después, cuando exista la boleta
 
 Crear el cliente **no le da acceso al portal**; eso es una
 [tarea aparte del administrador](#dar-acceso-al-portal-a-un-cliente).
+
+![Formulario de nuevo cliente, con los campos de nombre, correo, teléfono y dirección.](screenshots/registrar-un-cliente-nuevo.png)
 
 ## Registrar una sede de un cliente
 
@@ -244,6 +254,8 @@ Las sedes son las tiendas o sucursales de un cliente.
 **El nombre sólo tiene que ser único dentro de cada cliente.** Dos clientes
 distintos pueden tener cada uno una sede llamada «Centro»; el sistema no lo impide.
 Lo que sí rechaza es repetir el nombre dentro del mismo cliente.
+
+![Formulario de nueva sede, con el selector de cliente y los campos de nombre y dirección.](screenshots/registrar-una-sede-de-un-cliente.png)
 
 ## Registrar una máquina
 
@@ -270,6 +282,8 @@ Deje el número de serie en blanco si la máquina no tiene uno. **No invente rel
 del tipo «SIN-SERIE-1»**: el sistema admite tantas máquinas sin serie como haga
 falta, y esos rellenos terminan siendo permanentes y saliendo en los reportes.
 
+![Formulario de nueva máquina, con número de serie, número de activo, modelo, marca, tipo, cliente dueño y sede actual.](screenshots/registrar-una-maquina.png)
+
 ## Trasladar una máquina a otra tienda
 
 Cuando una máquina se presta a otra sede del mismo cliente:
@@ -282,6 +296,8 @@ Esto cambia dónde está la máquina **hoy**. **No modifica ningún mantenimient
 anterior**: cada uno conserva la sede donde efectivamente se realizó el trabajo. Es
 exactamente lo que se busca, y es la [regla 3](#3-la-sede-de-un-mantenimiento-es-una-instantánea).
 
+![Formulario de edición de una máquina, con el selector de sede actual que se cambia al trasladarla a otra tienda.](screenshots/trasladar-una-maquina-a-otra-tienda.png)
+
 ## Registrar una marca o un tipo de maquinaria
 
 Las pestañas **«Marcas»** y **«Tipos»** funcionan igual: **Nombre** (obligatorio) y
@@ -289,6 +305,8 @@ Descripción. El nombre no puede repetirse.
 
 Son listas de apoyo: existen para que las máquinas puedan clasificarse, y hay que
 crearlas antes de registrar una máquina que las use.
+
+![Formulario de nueva marca, con los campos de nombre y descripción.](screenshots/registrar-una-marca-o-un-tipo-de-maquinaria.png)
 
 ## Descargar el catálogo completo para Excel
 
@@ -312,6 +330,8 @@ puede no coincidir con la sede actual de la máquina que aparece en la hoja ante
 El archivo contiene exactamente la información que la sesión de quien lo descarga
 tiene permitido consultar.
 
+![Pantalla de reportes con el botón para descargar el catálogo en formato CSV.](screenshots/descargar-el-catalogo-completo-para-excel.png)
+
 ---
 
 # Tareas exclusivas del administrador
@@ -323,6 +343,8 @@ tiene permitido consultar.
    caracteres) y **Rol** (empleado o administrador).
 3. Pulse **«Crear usuario»**.
 4. Entregue el correo y la contraseña temporal a la persona.
+
+![Formulario de nuevo usuario interno, con nombre completo, correo, contraseña temporal y selector de rol.](screenshots/crear-una-cuenta-para-alguien-de-la-empresa.png)
 
 ## Cambiar el rol de una cuenta
 
@@ -343,6 +365,8 @@ Dos cambios de rol están prohibidos y el sistema los rechaza con un mensaje:
   visibilidad sobre los datos de todos los clientes. La prohibición está impuesta
   en la base de datos, no sólo en la pantalla: no hay forma de conseguirlo por otra
   vía.
+
+![Lista de usuarios internos, con el selector de rol en cada fila y la nota de que los accesos al portal se gestionan desde la ficha del cliente.](screenshots/cambiar-el-rol-de-una-cuenta.png)
 
 ## Eliminar una cuenta interna
 
@@ -371,6 +395,8 @@ Si el cliente ya tiene acceso, en lugar del formulario se muestra su estado.
 > aparece un mensaje de error. Esto es deliberado: con dos accesos, archivar al
 > cliente dejaría uno de ellos activo.
 
+![Ficha de un cliente con la sección «Acceso al portal», donde se indican el correo de acceso y una contraseña temporal.](screenshots/dar-acceso-al-portal-a-un-cliente.png)
+
 ## Archivar un cliente, es decir, darlo de baja
 
 1. Pestaña **«Clientes»** → **«Archivar»** en la fila del cliente.
@@ -385,6 +411,8 @@ Archivar un cliente hace tres cosas a la vez:
 
 Es el procedimiento de baja de un cliente. No hay otro.
 
+![Lista de clientes, con el botón «Archivar» al final de cada fila.](screenshots/archivar-un-cliente-es-decir-darlo-de-baja.png)
+
 ## Archivar una sede, una máquina, una marca o un tipo
 
 En la lista correspondiente, pulse **«Archivar»** en la fila. El registro
@@ -393,6 +421,8 @@ desaparece de las listas y de los selectores, y conserva todo lo asociado.
 Recuerde la [regla 4](#4-las-sedes-archivadas-siguen-apareciendo-marcadas): una
 sede archivada seguirá apareciendo, marcada como *(archivada)*, en los formularios
 de las máquinas y los mantenimientos que ya la referenciaban.
+
+![Lista de sedes, con el botón «Archivar» al final de cada fila.](screenshots/archivar-una-sede-una-maquina-una-marca-o-un-tipo.png)
 
 ## Eliminar un mantenimiento
 
@@ -425,6 +455,8 @@ La página de inicio del portal tiene dos partes:
 - **Mis máquinas**: una tarjeta por máquina **activa**, con su número de serie, la
   marca, el tipo, el modelo y la **sede actual**.
 
+![Página de inicio del portal, con los datos de contacto del cliente y una tarjeta por cada una de sus máquinas.](screenshots/ver-mis-maquinas.png)
+
 ## Ver el historial de una máquina
 
 Pulse una máquina para abrirla. Arriba aparecen sus datos —marca, tipo, modelo,
@@ -437,6 +469,8 @@ no coincidir con la sede actual de la máquina que aparece en el encabezado. Es
 correcto: la máquina pudo trasladarse después.
 
 El historial **no muestra montos**.
+
+![Historial de mantenimientos de una máquina en el portal, con la fecha, la sede donde se atendió, el tipo, el estado y la descripción de cada trabajo.](screenshots/ver-el-historial-de-una-maquina.png)
 
 ## Solicitar un mantenimiento
 
@@ -451,6 +485,8 @@ registrada automáticamente a partir de la ubicación actual de la máquina.
 
 Cuando el personal la atienda, verá cambiar el estado a «programado» —con su
 fecha— o a «cancelado».
+
+![Recuadro «Solicitar mantenimiento» del portal, con el campo «¿Qué necesita?» y el botón de enviar.](screenshots/solicitar-un-mantenimiento.png)
 
 ## Qué no se puede hacer desde el portal
 

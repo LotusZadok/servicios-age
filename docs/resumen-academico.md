@@ -30,7 +30,7 @@ tipos—, porque esa parte estaba bien.
 
 ---
 
-## Cuatro decisiones defendibles
+## Cinco decisiones defendibles
 
 ### 1. La autorización vive en Postgres, no en las rutas
 
@@ -98,6 +98,29 @@ previene es concreto y silencioso: dos altas concurrentes crearían dos perfiles
 la baja del cliente —que busca el perfil vinculado con `.maybeSingle()`— fallaría sin
 avisar, dejando un acceso activo.
 
+### 5. Un `check` de tabla no es una política, y por eso sirve aquí
+
+La pantalla de gestión de usuarios listaba todos los perfiles, incluidos los
+accesos al portal de los clientes, y su selector de rol sólo ofrecía los roles
+internos: guardar sobre la fila de un cliente convertía su acceso de portal en
+personal interno **conservando el `client_id`**, es decir, en una cuenta con
+visibilidad sobre los datos de todos los clientes.
+
+Lo interesante es dónde **no** iba la corrección. La acción que cambia el rol
+escribe con el cliente de rol de servicio, que evita RLS por diseño, así que una
+política nueva sobre `profiles` no habría tocado ese camino —y habría dado la
+falsa impresión de que sí—. La restricción `check ((role = 'cliente') = (client_id
+is not null))` sí lo alcanza, porque `service_role` evita el row-level security
+pero no las restricciones de tabla; y con ella también quedan cubiertos un script
+bajo `tsx` y un `psql` a mano. La validación en la acción y el filtro del listado
+existen para dar un mensaje entendible y quitar la trampa de la pantalla, no para
+sostener el invariante.
+
+Que la restricción pudiera escribirse bidireccional no fue una preferencia: hubo
+que comprobar antes que ningún camino deja un lado sin el otro —la clave foránea no
+declara `on delete`, los clientes se archivan en vez de borrarse, y el borrado de
+una cuenta se lleva la fila entera por cascada—.
+
 ---
 
 ## Qué se descartó, y por qué
@@ -118,13 +141,13 @@ avisar, dejando un acceso activo.
 
 ## Cobertura de pruebas
 
-**30 pruebas unitarias** (Vitest) sobre las tres piezas puras del proyecto:
+**40 pruebas unitarias** (Vitest) sobre las tres piezas puras del proyecto:
 `permissions.ts` —reglas de rol—, `maintenances.ts` —orden de solicitudes y cálculo
 del impuesto propuesto— y `format.ts` —presentación de importes y ausencias—.
 Mantenerlas puras, sin cliente de Supabase y sin `async`, es lo que las hace
 verificables sin infraestructura.
 
-**18 pruebas de extremo a extremo** (Playwright) en nueve archivos: autenticación,
+**21 pruebas de extremo a extremo** (Playwright) en diez archivos: autenticación,
 marca, CRUD de clientes, sedes y catálogo, máquinas, mantenimientos, exportación
 CSV, portal y solicitudes.
 
@@ -146,6 +169,4 @@ Dos detalles del diseño de la batería que valen más que el número:
 **Lo que no está cubierto** y conviene reconocer antes de que lo pregunten: no hay
 pruebas sobre el camino de borrado de mantenimientos, que es donde la
 implementación y la documentación del proyecto discrepan —la documentación describe
-un archivado y el código ejecuta un borrado físico—; ni sobre la pantalla de
-gestión de usuarios, cuya lista incluye las cuentas de portal mientras su selector
-de rol sólo ofrece los roles internos.
+un archivado y el código ejecuta un borrado físico—.

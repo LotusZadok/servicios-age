@@ -68,8 +68,9 @@ El diagrama entidad-relación completo está en
 describe qué representa cada tabla y qué decisiones lleva encima.
 
 - **`profiles`** — extiende `auth.users`. Campos `full_name`, `role` y `client_id`.
-  El rol es uno de `admin`, `empleado` o `cliente`. Sólo los perfiles de rol
-  `cliente` llevan `client_id`, apuntando a `clients`.
+  El rol es uno de `admin`, `empleado` o `cliente`. Un perfil lleva `client_id`,
+  apuntando a `clients`, **si y sólo si su rol es `cliente`**: lo impone la
+  restricción `profiles_portal_role` (ver más abajo).
 - **`clients`** — nombre, correo, teléfono, dirección y `active`.
 - **`locations`** — las sedes o tiendas de un cliente: `client_id`, `name`,
   `address` (admite nulo), `active` y `created_at`. **El nombre es único por
@@ -202,8 +203,29 @@ El pareo entre sede y cliente en `machines` se valida en `validateLocation`
 una Server Action es alcanzable por POST directo.
 
 `src/lib/permissions.ts` es lógica pura y con pruebas: `canDelete`,
-`canManageUsers`, `isStaff` y `homePathForRole`. Sólo `admin` borra y gestiona
-usuarios. **Debe mantenerse pura**: sin cliente de Supabase y sin `async`.
+`canManageUsers`, `isStaff`, `homePathForRole` y `roleChangeBlockedReason`. Sólo
+`admin` borra y gestiona usuarios. **Debe mantenerse pura**: sin cliente de Supabase
+y sin `async`.
+
+### `profiles_portal_role`: un CHECK, no una política
+
+Un perfil tiene `client_id` si y sólo si su rol es `cliente`. La restricción existe
+porque `/dashboard/users` listaba todos los perfiles, accesos de portal incluidos, y
+su selector de rol sólo ofrecía los roles internos: guardar sobre la fila de un
+cliente convertía su acceso de portal en personal interno **conservando el
+`client_id`**, es decir, en una cuenta con visibilidad sobre todos los datos.
+
+**Va como `check` de tabla y no como política a propósito.** La acción que cambia el
+rol escribe con el cliente de rol de servicio, que evita RLS por diseño, de modo que
+una política sobre `profiles` no habría tocado ese camino. Un `check` sí lo alcanza,
+igual que a un script bajo `tsx` o a un `psql` a mano. `profiles_update_admin_only`
+queda intacta, y la validación de `roleChangeBlockedReason` en la acción existe para
+dar un mensaje entendible, no para sostener el invariante.
+
+La forma es bidireccional porque se verificó que ningún camino deja un lado sin el
+otro; el razonamiento completo, con los cuatro caminos revisados, está en el
+comentario de la propia migración. **Al añadir un camino que escriba `profiles`, hay
+que respetar el par: ambas columnas o ninguna.**
 
 ### `maintenances_insert_client` es el único camino de escritura de un cliente
 
@@ -225,7 +247,7 @@ la tabla y la recreó con las cinco comprobaciones nuevas.
 
 ## 4. Migraciones
 
-Las migraciones viven en `supabase/migrations/` y están numeradas. Son ocho.
+Las migraciones viven en `supabase/migrations/` y están numeradas. Son nueve.
 
 | # | Archivo | Qué hace |
 |---|---|---|
@@ -237,6 +259,7 @@ Las migraciones viven en `supabase/migrations/` y están numeradas. Son ocho.
 | 6 | `20260724000002_unique_client_portal_access.sql` | índice único parcial de acceso al portal |
 | 7 | `20260724000003_fase3_maintenance_requests.sql` | estados `solicitado` y `cancelado`; `maintenances_insert_client` |
 | 8 | `20260810000000_fase4_sedes_y_costos.sql` | `locations`, `asset_number`, desglose de costo, horímetro, referencias documentales, serie única parcial |
+| 9 | `20260902000000_profiles_portal_role_check.sql` | restricción `profiles_portal_role`: un perfil tiene `client_id` si y sólo si su rol es `cliente` |
 
 Reglas de trabajo:
 
@@ -352,22 +375,29 @@ npx playwright install     # sólo la primera vez
 npm run test:e2e
 ```
 
-**Unitarias (Vitest, `tests/unit/`): 30 casos** sobre `permissions.ts`,
+**Unitarias (Vitest, `tests/unit/`): 40 casos** sobre `permissions.ts`,
 `maintenances.ts` y `format.ts`. Son las tres piezas puras del proyecto: reglas de
 rol, orden de solicitudes y cálculo del impuesto propuesto, y presentación de
 importes y ausencias.
 
-**Extremo a extremo (Playwright, `tests/e2e/`): 18 casos** en nueve archivos, que
+**Extremo a extremo (Playwright, `tests/e2e/`): 21 casos** en diez archivos, que
 cubren autenticación, marca, CRUD de clientes, de sedes y de catálogo, máquinas,
-mantenimientos, la exportación CSV del catálogo, el portal y las solicitudes.
+mantenimientos, la exportación CSV del catálogo, el portal, las solicitudes y la
+guarda de escalada de rol.
 
-Dos particularidades deliberadas:
+Tres particularidades deliberadas:
 
 - **El aislamiento de `locations` se prueba contra PostgREST con la llave anónima,
   no contra la interfaz.** El portal no tiene pantalla de sedes, así que lo que hay
   que demostrar es que RLS aguanta cuando alguien habla directo con la API. La
   prueba de inserción exige el código de error `42501`; afirmar únicamente
   `error !== null` pasaría igual con un nombre de columna mal escrito.
+- **La escalada de rol se prueba con la llave de servicio, exigiendo el código
+  `23514`.** Es el camino con más privilegios que existe, así que si la restricción
+  `profiles_portal_role` lo detiene ahí, lo detiene en todos. La misma
+  especificación afirma además que el perfil de portal **no aparece** en
+  `/dashboard/users`: sin esa tercera afirmación, revertir el filtro del listado
+  dejaría pasar la batería entera, porque la restricción de la base seguiría verde.
 - **Playwright corre con `workers: 1` a propósito.** Las especificaciones comparten
   un servidor de desarrollo que compila rutas bajo demanda y una única instancia
   local de Supabase; en paralelo se saturaban y producían tiempos de espera
@@ -408,7 +438,7 @@ no en Europa; desde Costa Rica la diferencia es de unos 150 ms por petición.
   proyecto describe los mantenimientos como archivables y no eliminables, pero el
   código no implementa ese archivado: `deleteMaintenance` en
   `src/app/dashboard/maintenances/actions.ts` ejecuta un `DELETE` físico, la tabla
-  `maintenances` no tiene columna `active` en ninguna de las ocho migraciones, y la
+  `maintenances` no tiene columna `active` en ninguna migración, y la
   política `maintenances_delete` autoriza el `DELETE` al rol `admin`.
   <!-- VERIFICAR: discrepancia entre documentación e implementación. La intención declarada (archivar, nunca borrar) está en README.md y en las reglas internas del proyecto; el comportamiento observado en actions.ts es un DELETE físico restringido a admin. Se documenta lo observado. Resolver decidiendo cuál de los dos se corrige. -->
 - **Diferido a una fase posterior**, según el relevamiento interno del libro de

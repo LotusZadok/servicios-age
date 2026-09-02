@@ -329,15 +329,20 @@ tiene permitido consultar.
 En la lista de **«Usuarios»**, cada fila tiene un selector de rol. Elija el rol
 nuevo y pulse **«Guardar»**.
 
-**No se puede quitar el rol al último administrador.** El sistema lo rechaza con un
-mensaje: si no quedara ningún administrador, nadie podría volver a gestionar
-cuentas.
+**La pantalla «Usuarios» contiene únicamente cuentas internas.** Los accesos al
+portal de los clientes **no aparecen ahí**: se consultan y se crean desde
+[la ficha del cliente](#dar-acceso-al-portal-a-un-cliente), en «Clientes» →
+«Editar» → «Acceso al portal». Ése es el único lugar donde se gestionan.
 
-> **Atención.** La lista de «Usuarios» muestra **todas** las cuentas del sistema,
-> incluidas las de portal de los clientes, y su selector de rol sólo ofrece
-> «admin» y «empleado». Pulsar «Guardar» sobre la fila de un cliente convertiría su
-> acceso de portal en una cuenta de personal interno, con visibilidad sobre todos
-> los datos. Revise a quién corresponde la fila antes de guardar.
+Dos cambios de rol están prohibidos y el sistema los rechaza con un mensaje:
+
+- **Quitarle el rol al último administrador.** Si no quedara ninguno, nadie podría
+  volver a gestionar cuentas.
+- **Convertir un acceso de portal en una cuenta interna, o al revés.** Un acceso de
+  portal está atado a la ficha de su cliente; volverlo personal interno le daría
+  visibilidad sobre los datos de todos los clientes. La prohibición está impuesta
+  en la base de datos, no sólo en la pantalla: no hay forma de conseguirlo por otra
+  vía.
 
 ## Eliminar una cuenta interna
 

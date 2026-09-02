@@ -181,12 +181,17 @@ orden correcto es siempre aplicar la migración, verificar el esquema remoto y s
 entonces publicar el código que la asume; invertirlo deja la aplicación pidiéndole a
 la base columnas que no existen.
 
-Ese riesgo no es hipotético en el estado actual del proyecto: la octava migración
-—sedes, desglose de costo, horímetro y referencias documentales— **está aplicada
-únicamente en el entorno local y todavía no se ha ejecutado `supabase db push`
-contra la instancia en la nube**, mientras que el código que la asume ya está
-escrito. Es el caso concreto que motiva la deuda técnica registrada en el
-[manual técnico](manual-tecnico.md).
+Ese riesgo no es hipotético: ya ocurrió. La octava migración —sedes, desglose de
+costo, horímetro y referencias documentales— estuvo aplicada únicamente en el
+entorno local mientras el código que la asumía ya estaba escrito, y la
+documentación siguió describiéndola como pendiente incluso después de aplicarla.
+**Verificado el 2 de septiembre de 2026, el esquema remoto está al día: las nueve
+migraciones aplicadas y el historial local y el remoto alineados.**
+
+Que el desfase esté resuelto no cambia el diagrama. El paso sigue siendo manual y
+sigue estando fuera de la caja que Vercel despliega, así que el mismo desfase puede
+repetirse en la próxima migración; la deuda técnica correspondiente sigue abierta en
+el [manual técnico](manual-tecnico.md).
 
 ---
 

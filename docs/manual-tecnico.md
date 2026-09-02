@@ -270,11 +270,22 @@ Reglas de trabajo:
   que un despliegue aplicó una migración.
 - Tras cualquier cambio de esquema hay que regenerar `src/lib/database.types.ts`.
 
-**Estado de la migración 8.** Está aplicada **en el entorno local** y **todavía no
-se ha ejecutado `supabase db push` contra la instancia en la nube**. El código que
-la asume ya está escrito. Mientras no exista integración continua, el orden
-obligatorio es: `supabase db push`, verificar el esquema remoto y sólo entonces
-publicar el código.
+### Estado del esquema remoto
+
+**Verificado el 2 de septiembre de 2026 contra el proyecto de Supabase en la nube:
+las nueve migraciones están aplicadas y el historial local y el remoto están
+alineados.** En concreto, en el remoto existen `public.locations`, la restricción
+`profiles_portal_role` y las siete columnas que la migración 8 añadió a
+`maintenances` —`location_id`, `hour_meter`, `cost_subtotal`, `tax_amount`,
+`cost_total`, `report_ref` y `quote_ref`—.
+
+Ese estado es el de una fecha, no una garantía permanente: **la regla de arriba
+sigue vigente y es la que hay que aplicar antes de cada publicación.** La migración
+8 estuvo semanas aplicada sólo en local mientras el código que la asumía ya estaba
+escrito, y la documentación del proyecto arrastró ese desfase incluso después de
+resolverlo. Es exactamente el fallo que el paso manual permite y que la integración
+continua evitaría; hasta que exista, el orden obligatorio es `supabase db push`,
+verificar el esquema remoto y sólo entonces publicar el código.
 
 ---
 
@@ -349,8 +360,9 @@ Scripts disponibles: `npm run dev`, `build`, `start`, `lint`, `test:unit` y
 
 - **Frontend en Vercel**, con despliegue automático al publicar en la rama
   `master`.
-- **Backend en Supabase cloud.** El identificador del proyecto y las llaves viven
-  en las variables de entorno del despliegue, no en el repositorio, que es público.
+- **Backend en Supabase cloud**, en la región `us-east-2` (Ohio), verificada el 2
+  de septiembre de 2026. El identificador del proyecto y las llaves viven en las
+  variables de entorno del despliegue, no en el repositorio, que es público.
 - Las migraciones se aplican con `supabase db push`. Es un paso manual, separado
   del despliegue y fácil de olvidar; el diagrama de
   [`arquitectura.md`, sección 2](arquitectura.md#2-despliegue) lo señala
@@ -408,18 +420,26 @@ Tres particularidades deliberadas:
 
 ## 9. Deuda técnica declarada
 
-Ambos puntos son de naturaleza técnica y están asumidos conscientemente.
+Queda un punto abierto, de naturaleza técnica y asumido conscientemente.
 
-**1. Las migraciones quedan fuera de la integración continua.** Hoy Vercel puede
+**Las migraciones quedan fuera de la integración continua.** Hoy Vercel puede
 publicar código que asume un esquema no aplicado. Falta una acción de GitHub que
-ejecute `supabase db push` sobre `master` antes del despliegue. La migración 8 es el
-primer caso concreto: está aplicada en local, no en la nube, y el código que la
-asume ya está escrito. Mientras no exista esa automatización, el orden obligatorio
-es `supabase db push`, verificar el esquema remoto y recién entonces publicar.
+ejecute `supabase db push` sobre `master` antes del despliegue. Mientras no exista
+esa automatización, el orden obligatorio es `supabase db push`, verificar el esquema
+remoto y recién entonces publicar.
 
-**2. La región de la instancia de Supabase no está verificada.** Queda pendiente
-confirmar que el proyecto en la nube está alojado en una región de Norteamérica y
-no en Europa; desde Costa Rica la diferencia es de unos 150 ms por petición.
+El caso que lo demuestra ya ocurrió y **ya está resuelto**: la migración 8 estuvo
+aplicada sólo en el entorno local mientras el código que la asumía ya estaba
+escrito. Hoy el esquema remoto está al día (ver
+[§4](#estado-del-esquema-remoto)), pero el mecanismo que permitió el desfase sigue
+siendo manual, así que la deuda no se cierra con haberlo corregido una vez.
+
+### Resuelto
+
+**La región de la instancia de Supabase.** Estaba pendiente confirmar que no
+estuviera en Europa, porque desde Costa Rica la diferencia sería de unos 150 ms por
+petición. **Verificado el 2 de septiembre de 2026: el proyecto está en `us-east-2`
+(Ohio), es decir Norteamérica.** El punto queda cerrado.
 
 ---
 

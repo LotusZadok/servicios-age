@@ -62,8 +62,7 @@ jobs:
           KEY=${PUBLISHABLE_KEY:-$ANON_KEY}
           for f in is_admin is_staff current_client_id; do
             echo "== rpc $f"
-            curl -s -w ' [HTTP %{http_code}]
-' -X POST "$API_URL/rest/v1/rpc/$f" -H "apikey: $KEY" -H "Content-Type: application/json" -d '{}'
+            curl -s -w ' [HTTP %{http_code}]' -X POST "$API_URL/rest/v1/rpc/$f" -H "apikey: $KEY" -H "Content-Type: application/json" -d '{}'; echo
           done
       - name: Generar .env.local desde supabase status
         run: |

@@ -169,8 +169,10 @@ flowchart TD
 La aplicación no tiene servidor propio ni capa intermedia: los Server Components
 leen de Postgres y las Server Actions escriben en él, ambos a través del cliente
 `supabase-js` con la sesión del usuario. No hay ORM. El único código que corre con
-privilegios elevados es el que usa el cliente de rol de servicio, reservado para
-crear usuarios de autenticación y perfiles, y aislado tras `import 'server-only'`
+privilegios elevados es el que usa el cliente de rol de servicio, reservado a la
+gestión de cuentas —crear y borrar usuarios de autenticación y perfiles, cambiar
+roles y vetar el acceso al portal de un cliente archivado—, y aislado tras
+`import 'server-only'`
 para que incluirlo en un componente de cliente sea un error de compilación.
 
 El detalle que gobierna todo el procedimiento de publicación está en la flecha que
@@ -183,14 +185,11 @@ la base columnas que no existen.
 
 Ese riesgo no es hipotético: ya ocurrió. La octava migración —sedes, desglose de
 costo, horímetro y referencias documentales— estuvo aplicada únicamente en el
-entorno local mientras el código que la asumía ya estaba escrito, y la
-documentación siguió describiéndola como pendiente incluso después de aplicarla.
-**Verificado el 2 de septiembre de 2026, el esquema remoto está al día: las nueve
-migraciones aplicadas y el historial local y el remoto alineados.**
+entorno local mientras el código que la asumía ya estaba escrito.
 
-Que el desfase esté resuelto no cambia el diagrama. El paso sigue siendo manual y
-sigue estando fuera de la caja que Vercel despliega, así que el mismo desfase puede
-repetirse en la próxima migración; la deuda técnica correspondiente sigue abierta en
+El paso sigue siendo manual y sigue estando fuera de la caja que Vercel despliega:
+el CI aplica las migraciones a un Supabase local para probarlas, pero no al remoto,
+así que el mismo desfase puede repetirse en la próxima migración; la deuda técnica correspondiente sigue abierta en
 el [manual técnico](manual-tecnico.md).
 
 ---
@@ -246,8 +245,9 @@ sí restringe la lectura es en las tablas que llevan datos de negocio: un `clien
 sólo ve su propia fila de `clients`, sus sedes, sus máquinas y los mantenimientos de
 esas máquinas. Las funciones auxiliares `is_admin()`, `is_staff()` y
 `current_client_id()` son `security definer` para evitar consultas recursivas contra
-`profiles`, y los privilegios son de mínimo: `anon` no tiene nada, `authenticated`
-sólo DML, el rol de servicio todo.
+`profiles`, y los privilegios son de mínimo: `anon` no tiene nada —ni tablas, ni
+`EXECUTE` sobre funciones, ni secuencias; esto último desde la migración 10—,
+`authenticated` sólo DML, el rol de servicio todo.
 
 ---
 
@@ -273,7 +273,7 @@ stateDiagram-v2
 
 Los cinco valores están fijados por una restricción `check` sobre la columna
 `status`, y `programado` es el valor por omisión de la columna. `solicitado` y
-`cancelado` se incorporaron con la tercera migración, cuando el portal ganó la
+`cancelado` se incorporaron con la séptima migración, cuando el portal ganó la
 capacidad de pedir servicio: una solicitud es un mantenimiento que todavía no tiene
 fecha —por eso `date` pasó a admitir nulos— y `cancelado` es el cierre de un trabajo
 que no se realizará.

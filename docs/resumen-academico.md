@@ -20,11 +20,11 @@ decisiones que siguen.
 
 **Antecedente.** Existe un proyecto universitario de 2023 (TEC, curso de ingeniería
 de software) llamado `AGServicios-main`: aplicación Android en Kotlin, API en Flask
-y SQL Server con 25 procedimientos almacenados que armaban JSON a mano; el cliente
+y SQL Server con 26 procedimientos almacenados detrás de una API que armaba cada respuesta JSON campo por campo; el cliente
 Android apuntaba a un túnel ngrok fijo en el código, las contraseñas se cifraban a
 mano con bcrypt en la API, y la batería de pruebas era un único caso de humo contra
 `/login`. Nunca se usó. Yo llevaba la capa de base de datos en ese equipo, de modo
-que esos 25 procedimientos eran míos. Esta versión no comparte código con aquella:
+que esos 26 procedimientos eran míos. Esta versión no comparte código con aquella:
 lo único que sobrevivió fue el modelo de dominio —clientes, máquinas, marcas,
 tipos—, porque esa parte estaba bien.
 
@@ -127,12 +127,12 @@ una cuenta se lleva la fila entera por cascada—.
 
 | Descartado | Razón |
 |---|---|
-| Los 25 procedimientos almacenados de 2023 | Lo primero que hice fue borrar mi propio trabajo. Código de aplicación con tipos generados se cambia más fácil y se puede probar. |
+| Los 26 procedimientos almacenados de 2023 | Lo primero que hice fue borrar mi propio trabajo. Código de aplicación con tipos generados se cambia más fácil y se puede probar. |
 | Autorización decidida por ruta | Demostradamente insuficiente: la pantalla de marcas cargaba para un cliente. |
 | Tabla de historial de asignación de máquinas | La instantánea en `maintenances` ya da los reportes históricos correctos. Un historial temporal completo cuesta más y responde una pregunta que el negocio todavía no hace: dónde estuvo esta máquina en marzo aunque no se le haya hecho nada. |
 | Columna `cost` única | Sustituida por subtotal, impuesto y total generado. Se eliminó de golpe porque la base estaba vacía: pagar una migración de datos después no habría comprado nada. |
 | Reportes en PDF | Estaban en el diseño original. Se descartaron para no incorporar una dependencia de renderizado por algo que Excel abre igual. Si un cliente necesita un documento con formato, hay que revisarlo. |
-| Logo en SVG | El SVG disponible pesaba 108 KB porque era el mismo PNG de 3000px envuelto en una etiqueta `<svg>`, no arte vectorial. Cuatro PNG renderizados a sus tres tamaños fijos pesan unos 32 KB y son más nítidos. |
+| Logo en SVG | El arte de origen es raster y la aplicación lo usa en tamaños fijos: tres PNG y un ICO renderizados a su tamaño pesan unos 32 KB en total y son más nítidos que escalar en tiempo de ejecución. |
 | ORM | `supabase-js` con tipos generados. Una capa menos entre el código y las políticas que hacen cumplir la autorización. |
 | Biblioteca de componentes | El sistema visual completo cabe en un archivo CSS. |
 | Alquileres y transacciones | No estaban en el proyecto de 2023 y el negocio no los necesita. |

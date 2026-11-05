@@ -195,8 +195,9 @@ Reparto de accesos:
 - `brands` y `machine_types` conservan la lectura abierta a cualquier sesión
   autenticada, a propósito: son etiquetas de catálogo, no datos de cliente. Lo que
   la política restringe ahí es la escritura.
-- Privilegios: `anon` no tiene nada, `authenticated` sólo DML, el rol de servicio
-  todo. **No se amplía un privilegio para que una consulta funcione.**
+- Privilegios: `anon` no tiene nada —ni tablas, ni `EXECUTE` sobre funciones, ni
+  secuencias; esto último desde la migración 10—, `authenticated` sólo DML, el rol
+  de servicio todo. **No se amplía un privilegio para que una consulta funcione.**
 
 El pareo entre sede y cliente en `machines` se valida en `validateLocation`
 (`src/app/dashboard/machines/actions.ts`) contra la base, y no sólo en la interfaz:
@@ -247,7 +248,7 @@ la tabla y la recreó con las cinco comprobaciones nuevas.
 
 ## 4. Migraciones
 
-Las migraciones viven en `supabase/migrations/` y están numeradas. Son nueve.
+Las migraciones viven en `supabase/migrations/` y están numeradas. Son diez.
 
 | # | Archivo | Qué hace |
 |---|---|---|
@@ -260,6 +261,7 @@ Las migraciones viven en `supabase/migrations/` y están numeradas. Son nueve.
 | 7 | `20260724000003_fase3_maintenance_requests.sql` | estados `solicitado` y `cancelado`; `maintenances_insert_client` |
 | 8 | `20260810000000_fase4_sedes_y_costos.sql` | `locations`, `asset_number`, desglose de costo, horímetro, referencias documentales, serie única parcial |
 | 9 | `20260902000000_profiles_portal_role_check.sql` | restricción `profiles_portal_role`: un perfil tiene `client_id` si y sólo si su rol es `cliente` |
+| 10 | `20261105000000_revoke_anon_routines_sequences.sql` | quita a `anon` y a `PUBLIC` el `EXECUTE` sobre las funciones de `public` y todo sobre las secuencias, también en los privilegios por omisión |
 
 Reglas de trabajo:
 
@@ -270,22 +272,15 @@ Reglas de trabajo:
   que un despliegue aplicó una migración.
 - Tras cualquier cambio de esquema hay que regenerar `src/lib/database.types.ts`.
 
-### Estado del esquema remoto
+### El esquema remoto
 
-**Verificado el 2 de septiembre de 2026 contra el proyecto de Supabase en la nube:
-las nueve migraciones están aplicadas y el historial local y el remoto están
-alineados.** En concreto, en el remoto existen `public.locations`, la restricción
-`profiles_portal_role` y las siete columnas que la migración 8 añadió a
-`maintenances` —`location_id`, `hour_meter`, `cost_subtotal`, `tax_amount`,
-`cost_total`, `report_ref` y `quote_ref`—.
-
-Ese estado es el de una fecha, no una garantía permanente: **la regla de arriba
-sigue vigente y es la que hay que aplicar antes de cada publicación.** La migración
-8 estuvo semanas aplicada sólo en local mientras el código que la asumía ya estaba
-escrito, y la documentación del proyecto arrastró ese desfase incluso después de
-resolverlo. Es exactamente el fallo que el paso manual permite y que la integración
-continua evitaría; hasta que exista, el orden obligatorio es `supabase db push`,
-verificar el esquema remoto y sólo entonces publicar el código.
+**Vercel no aplica migraciones.** El CI aplica las de `supabase/migrations/` a un
+Supabase local en cada corrida y prueba contra él, pero no hay paso que ejecute
+`supabase db push` contra el proyecto en la nube. Por eso el orden obligatorio
+antes de cada publicación es `supabase db push`, verificar el esquema remoto y
+sólo entonces publicar el código que lo asume. La migración 8 es el caso que ya
+ocurrió: estuvo aplicada sólo en local mientras el código que la asumía ya
+estaba escrito.
 
 ---
 
@@ -322,17 +317,18 @@ desarrollo y se ejecuta por `npx`; no hace falta instalarlo globalmente.
 
 ```bash
 npm install
-npx supabase start        # imprime API URL, anon key y service_role key
+npx supabase start        # imprime la URL de la API y las llaves locales
 ```
 
 Copie `.env.local.example` a `.env.local` y complete los valores que imprimió
-`supabase start`:
+`supabase start` (se vuelven a ver con `npx supabase status`). Las etiquetas con
+que el CLI las imprime cambian entre versiones; lo que importa es cuál es cuál:
 
-| Lo imprime como | Va en |
+| Valor | Va en |
 |---|---|
-| `API URL` | `NEXT_PUBLIC_SUPABASE_URL` |
-| `anon key` | `NEXT_PUBLIC_SUPABASE_ANON_KEY` |
-| `service_role key` | `SUPABASE_SERVICE_ROLE_KEY` |
+| la URL de la API | `NEXT_PUBLIC_SUPABASE_URL` |
+| la llave pública, la que puede llegar al navegador | `NEXT_PUBLIC_SUPABASE_ANON_KEY` |
+| la llave secreta, sólo para el servidor | `SUPABASE_SERVICE_ROLE_KEY` |
 
 Después, en este orden:
 
@@ -351,8 +347,8 @@ arranque parece haber funcionado y el primer inicio de sesión falla.
 extremo:** varias especificaciones necesitan una cuenta de cliente con al menos una
 máquina, y el formulario de mantenimiento necesita una máquina que seleccionar.
 
-Scripts disponibles: `npm run dev`, `build`, `start`, `lint`, `test:unit` y
-`test:e2e`.
+Scripts disponibles: `npm run dev`, `build`, `start`, `lint`, `typecheck`,
+`test:unit` y `test:e2e`.
 
 ---
 
@@ -360,8 +356,8 @@ Scripts disponibles: `npm run dev`, `build`, `start`, `lint`, `test:unit` y
 
 - **Frontend en Vercel**, con despliegue automático al publicar en la rama
   `master`.
-- **Backend en Supabase cloud**, en la región `us-east-2` (Ohio), verificada el 2
-  de septiembre de 2026. El identificador del proyecto y las llaves viven en las
+- **Backend en Supabase cloud**, en la región `us-east-2` (Ohio), verificada el 4
+  de noviembre de 2026 con `supabase projects list`. El identificador del proyecto y las llaves viven en las
   variables de entorno del despliegue, no en el repositorio, que es público.
 - Las migraciones se aplican con `supabase db push`. Es un paso manual, separado
   del despliegue y fácil de olvidar; el diagrama de
@@ -422,24 +418,20 @@ Tres particularidades deliberadas:
 
 Queda un punto abierto, de naturaleza técnica y asumido conscientemente.
 
-**Las migraciones quedan fuera de la integración continua.** Hoy Vercel puede
-publicar código que asume un esquema no aplicado. Falta una acción de GitHub que
-ejecute `supabase db push` sobre `master` antes del despliegue. Mientras no exista
-esa automatización, el orden obligatorio es `supabase db push`, verificar el esquema
-remoto y recién entonces publicar.
-
-El caso que lo demuestra ya ocurrió y **ya está resuelto**: la migración 8 estuvo
-aplicada sólo en el entorno local mientras el código que la asumía ya estaba
-escrito. Hoy el esquema remoto está al día (ver
-[§4](#estado-del-esquema-remoto)), pero el mecanismo que permitió el desfase sigue
-siendo manual, así que la deuda no se cierra con haberlo corregido una vez.
+**Las migraciones no llegan al remoto por la integración continua.** El CI de
+GitHub Actions las aplica a un Supabase local en cada corrida, pero ningún paso
+ejecuta `supabase db push` contra el proyecto en la nube, así que Vercel puede
+publicar código que asume un esquema no aplicado. Mientras no exista esa
+automatización, el orden obligatorio es `supabase db push`, verificar el esquema
+remoto y recién entonces publicar (ver [§4](#el-esquema-remoto)). La migración 8
+ya cayó en ese hueco una vez.
 
 ### Resuelto
 
 **La región de la instancia de Supabase.** Estaba pendiente confirmar que no
 estuviera en Europa, porque desde Costa Rica la diferencia sería de unos 150 ms por
-petición. **Verificado el 2 de septiembre de 2026: el proyecto está en `us-east-2`
-(Ohio), es decir Norteamérica.** El punto queda cerrado.
+petición. **Verificado el 4 de noviembre de 2026 con `supabase projects list`: el
+proyecto está en `us-east-2` (Ohio), es decir Norteamérica.** El punto queda cerrado.
 
 ---
 

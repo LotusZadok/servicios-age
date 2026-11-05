@@ -1,4 +1,5 @@
 # Servicios AGE
+n[![CI](https://github.com/LotusZadok/servicios-age/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/LotusZadok/servicios-age/actions/workflows/ci.yml)
 
 Servicios AGE maintains industrial equipment — mostly forklifts — for companies in Costa Rica. Until mid-2026 every service job was recorded in an Excel workbook.
 

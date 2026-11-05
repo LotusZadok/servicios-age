@@ -15,8 +15,10 @@ select is(
 select is(
   (select array_agg(c.relname::text order by c.relname)
      from pg_class c join pg_namespace n on n.oid = c.relnamespace
-    where n.nspname = 'public' and c.relkind = 'S'
-      and has_sequence_privilege('anon', c.oid, 'USAGE,SELECT,UPDATE')),
+    -- El CASE impide evaluar has_sequence_privilege sobre algo que no es
+    -- secuencia (pgTAP crea tipos en public): Postgres no garantiza el orden del AND.
+    where n.nspname = 'public'
+      and case when c.relkind = 'S' then has_sequence_privilege('anon', c.oid, 'USAGE,SELECT,UPDATE') end),
   null,
   'anon no usa ninguna secuencia de public'
 );

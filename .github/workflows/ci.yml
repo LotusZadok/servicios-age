@@ -10,8 +10,8 @@ jobs:
   checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
@@ -31,13 +31,13 @@ jobs:
       E2E_CLIENT_EMAIL: portal@agservicios.local
       E2E_CLIENT_PASSWORD: changeme123
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
       - run: npm ci
-      - uses: supabase/setup-cli@v1
+      - uses: supabase/setup-cli@v3
         with:
           version: 2.109.1
       - run: supabase start
@@ -59,7 +59,7 @@ jobs:
           npx tsx scripts/seed-portal-test.ts
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e -- --reporter=list,html
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: playwright-report

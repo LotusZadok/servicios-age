@@ -39,11 +39,14 @@ npx supabase start        # local Postgres and Auth in Docker
 `supabase start` prints the credentials for the local instance. Copy
 `.env.local.example` to `.env.local` and fill it in:
 
-| Printed as         | Goes into                       |
-| ------------------ | ------------------------------- |
-| `API URL`          | `NEXT_PUBLIC_SUPABASE_URL`      |
-| `anon key`         | `NEXT_PUBLIC_SUPABASE_ANON_KEY` |
-| `service_role key` | `SUPABASE_SERVICE_ROLE_KEY`     |
+The CLI's labels for these values change between versions (`npx supabase status`
+prints them again); what matters is which one is which:
+
+| Value                                        | Goes into                       |
+| -------------------------------------------- | ------------------------------- |
+| the API URL                                  | `NEXT_PUBLIC_SUPABASE_URL`      |
+| the public key, safe to reach the browser    | `NEXT_PUBLIC_SUPABASE_ANON_KEY` |
+| the secret key, server only                  | `SUPABASE_SERVICE_ROLE_KEY`     |
 
 The four `E2E_*` variables are not printed by anything. `E2E_ADMIN_EMAIL` and
 `E2E_ADMIN_PASSWORD` are yours to choose, and have to match what you pass to the

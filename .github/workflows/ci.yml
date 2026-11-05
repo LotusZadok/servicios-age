@@ -41,6 +41,7 @@ jobs:
         with:
           version: 2.109.1
       - run: supabase start
+      - run: supabase test db
       - name: Generar .env.local desde supabase status
         run: |
           eval "$(supabase status -o env)"

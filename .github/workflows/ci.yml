@@ -42,28 +42,6 @@ jobs:
           version: 2.109.1
       - run: supabase start
       - run: supabase test db
-      - name: Diagnóstico temporal de privilegios de anon
-        if: always()
-        run: |
-          eval "$(supabase status -o env)"
-          export PGPASSWORD=postgres
-          psql -h 127.0.0.1 -p 54322 -U postgres -d postgres -c "select current_user;" -c "
-            select p.proname, p.prosecdef as security_definer, pg_get_userbyid(p.proowner) as owner,
-                   has_function_privilege('anon', p.oid, 'EXECUTE') as anon_execute, p.proacl
-              from pg_proc p join pg_namespace n on n.oid = p.pronamespace
-             where n.nspname = 'public' order by 1;" -c "
-            select c.relname, has_sequence_privilege('anon', c.oid, 'USAGE,SELECT,UPDATE') as anon_any
-              from pg_class c join pg_namespace n on n.oid = c.relnamespace
-             where n.nspname = 'public' and c.relkind = 'S';" -c "
-            select pg_get_userbyid(d.defaclrole) as for_role, coalesce(n.nspname, '(todas)') as schema,
-                   d.defaclobjtype as type, d.defaclacl
-              from pg_default_acl d left join pg_namespace n on n.oid = d.defaclnamespace order by 1, 2, 3;" -c "
-            select has_schema_privilege('anon', 'public', 'USAGE') as anon_usage_public;"
-          KEY=${PUBLISHABLE_KEY:-$ANON_KEY}
-          for f in is_admin is_staff current_client_id; do
-            echo "== rpc $f"
-            curl -s -w ' [HTTP %{http_code}]' -X POST "$API_URL/rest/v1/rpc/$f" -H "apikey: $KEY" -H "Content-Type: application/json" -d '{}'; echo
-          done
       - name: Generar .env.local desde supabase status
         run: |
           eval "$(supabase status -o env)"

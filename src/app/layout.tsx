@@ -1,17 +1,28 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const plexSans = IBM_Plex_Sans({
+// IBM Plex, subconjunto latin, servido desde el repo (licencia en ./fonts/OFL.txt)
+// para que el build no dependa de fonts.googleapis.com. Son los mismos archivos
+// que embebía next/font/google; Sans es variable y se declara una vez por peso
+// igual que antes.
+const plexSans = localFont({
   variable: "--font-plex-sans",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  src: [
+    { path: "./fonts/IBMPlexSans-latin-var.woff2", weight: "400" },
+    { path: "./fonts/IBMPlexSans-latin-var.woff2", weight: "500" },
+    { path: "./fonts/IBMPlexSans-latin-var.woff2", weight: "600" },
+    { path: "./fonts/IBMPlexSans-latin-var.woff2", weight: "700" },
+  ],
 });
 
-const plexMono = IBM_Plex_Mono({
+const plexMono = localFont({
   variable: "--font-plex-mono",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  src: [
+    { path: "./fonts/IBMPlexMono-latin-400.woff2", weight: "400" },
+    { path: "./fonts/IBMPlexMono-latin-500.woff2", weight: "500" },
+    { path: "./fonts/IBMPlexMono-latin-600.woff2", weight: "600" },
+  ],
 });
 
 export const metadata: Metadata = {

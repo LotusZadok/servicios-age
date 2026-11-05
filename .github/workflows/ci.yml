@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run test:unit
+      - run: npm run build
+
+  e2e:
+    needs: checks
+    runs-on: ubuntu-latest
+    env:
+      # Valores de prueba: solo existen en el Supabase local que levanta este job.
+      E2E_ADMIN_EMAIL: admin-ci@agservicios.local
+      E2E_ADMIN_PASSWORD: ci-admin-password
+      E2E_CLIENT_EMAIL: portal@agservicios.local
+      E2E_CLIENT_PASSWORD: changeme123
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - uses: supabase/setup-cli@v3
+        with:
+          version: 2.109.1
+      - run: supabase start
+      - name: Generar .env.local desde supabase status
+        run: |
+          eval "$(supabase status -o env)"
+          cat > .env.local <<ENV
+          NEXT_PUBLIC_SUPABASE_URL=$API_URL
+          NEXT_PUBLIC_SUPABASE_ANON_KEY=${PUBLISHABLE_KEY:-$ANON_KEY}
+          SUPABASE_SERVICE_ROLE_KEY=${SECRET_KEY:-$SERVICE_ROLE_KEY}
+          E2E_ADMIN_EMAIL=$E2E_ADMIN_EMAIL
+          E2E_ADMIN_PASSWORD=$E2E_ADMIN_PASSWORD
+          E2E_CLIENT_EMAIL=$E2E_CLIENT_EMAIL
+          E2E_CLIENT_PASSWORD=$E2E_CLIENT_PASSWORD
+          ENV
+      - name: Sembrar datos de prueba
+        run: |
+          npx tsx scripts/seed-admin.ts "$E2E_ADMIN_EMAIL" "$E2E_ADMIN_PASSWORD" "Admin CI"
+          npx tsx scripts/seed-portal-test.ts
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e -- --reporter=list,html
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
